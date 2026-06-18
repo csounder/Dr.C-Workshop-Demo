@@ -109,8 +109,8 @@
 
 | Repo | Path | Branch | HEAD (session) | Remote |
 |------|------|--------|----------------|--------|
-| Dr.C Standalone | `~/Dr.C-Standalone` | `lac-2026-csound7` | `68e0373` | `https://github.com/mateolarreaferro/DRC-Standalone.git` |
-| Dr.C Terminal | `~/Dr.C` | `main` | `f7e88ab` | `https://github.com/mateolarreaferro/Dr.C.git` |
+| Dr.C Standalone | `~/Dr.C-Standalone` | `lac-2026-csound7` | `68e0373` | `https://github.com/csounder/DRC-Standalone |
+| Dr.C Terminal | `~/Dr.C` | `main` | `f7e88ab` | `https://github.com/csounder/DRC-Standalone |
 | Install / URLs | `~/Dr.C-URLS` | `main` | `ed46c4d` | `https://github.com/csounder/Dr.C.git` |
 | Workshop demo bundle | `~/Dr.C-Workshop-Demo` | `main` | see `DAY-1-HANDOFF.md` | `https://github.com/csounder/Dr.C-Workshop-Demo.git` |
 

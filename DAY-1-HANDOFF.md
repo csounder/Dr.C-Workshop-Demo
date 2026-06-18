@@ -70,7 +70,7 @@ cd ~/Dr.C-Workshop-Demo && git pull
 | Path | `~/Dr.C-Standalone` |
 | Branch | `lac-2026-csound7` |
 | **HEAD (Day 1 end)** | **`68e0373`** |
-| Remote | `https://github.com/mateolarreaferro/DRC-Standalone.git` |
+| Remote | `https://github.com/csounder/DRC-Standalone |
 
 **Day 1 commits (newest first):**
 
