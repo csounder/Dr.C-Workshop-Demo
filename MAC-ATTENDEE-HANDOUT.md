@@ -1,7 +1,7 @@
 # LAC 2026 — Dr.C Standalone (Mac attendee)
 
-**Your laptop** · branch **`lac-2026-csound7`** · min commit **`0cd5d22`** · v1.3.1  
-Repo: https://github.com/mateolarreaferro/Dr.C-Standalone · Releases: https://github.com/mateolarreaferro/Dr.C-Standalone/releases
+**Your laptop** · branch **`lac-2026-csound7`** · min commit **`68e0373`** · v1.3.1  
+Repo: https://github.com/csounder/DRC-Standalone · Releases: https://github.com/csounder/DRC-Standalone (main only — **use git clone for workshop**)
 
 > **No API key required** for offline demos (FM bell, Player, Web Apps).
 
@@ -29,21 +29,17 @@ echo 'export PATH="$HOME/bin:$HOME/Applications/Csound:$PATH"' >> ~/.zshrc && so
 
 If Homebrew Csound 6 shadows CS7: `brew unlink csound`
 
-## 2. Get Dr.C — DMG or git clone
+## 2. Get Dr.C — git clone (recommended)
 
-**A — DMG (easiest):** `DrC-*-arm64.dmg` or `DrC-*-x64.dmg` from [Releases](https://github.com/mateolarreaferro/Dr.C-Standalone/releases) → drag **DrC** to **Applications**. First launch: **Right-click → Open → Open**, or:
-
-```bash
-xattr -cr /Applications/DrC.app
-```
-
-**B — Git clone:**
+**Git clone** (workshop build on `lac-2026-csound7`):
 
 ```bash
-git clone -b lac-2026-csound7 https://github.com/mateolarreaferro/Dr.C-Standalone.git ~/Dr.C-Standalone
+git clone -b lac-2026-csound7 https://github.com/csounder/DRC-Standalone ~/Dr.C-Standalone
 cd ~/Dr.C-Standalone && git pull && npm install && chmod +x launchers/*.command scripts/*.sh
 cp .env.example .env   # optional
 ```
+
+**Optional — DMG (older main-branch build, not workshop):** `DrC-*-arm64.dmg` or `DrC-*-x64.dmg` from [Releases](https://github.com/csounder/DRC-Standalone) → drag **DrC** to **Applications**. First launch: **Right-click → Open → Open**, or `xattr -cr /Applications/DrC.app`
 
 ## 3. Launch (attendees)
 

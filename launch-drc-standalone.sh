@@ -17,8 +17,8 @@ die() {
 [[ -d "$DRC_ROOT" ]] || die "Dr.C Standalone not found at $DRC_ROOT
 
 Clone workshop build:
-  git clone https://github.com/mateolarreaferro/Dr.C-Standalone.git ~/Dr.C-Standalone
-  cd ~/Dr.C-Standalone && git checkout $WORKSHOP_BRANCH
+  git clone -b lac-2026-csound7 https://github.com/mateolarreaferro/DRC-Standalone.git ~/Dr.C-Standalone
+  cd ~/Dr.C-Standalone
   npm install && cp .env.example .env"
 
 command -v csound >/dev/null 2>&1 || die "Csound not on PATH — install Csound 7 to ~/Applications/Csound"

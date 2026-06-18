@@ -8,11 +8,11 @@
 
 ![Mac QR](https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https%3A%2F%2Fgithub.com%2Fcsounder%2FDr.C-Workshop-Demo%2Fblob%2Fmain%2FMAC-ATTENDEE-HANDOUT.md)
 
-**Mac setup guide** — Csound 7, Node 22, DMG or clone Dr.C Standalone, launch & verify
+**Mac setup guide** — Csound 7, Node 22, clone `lac-2026-csound7`, launch & verify
 
 https://github.com/csounder/Dr.C-Workshop-Demo/blob/main/MAC-ATTENDEE-HANDOUT.md
 
-Releases (DMG): https://github.com/mateolarreaferro/DRC-Standalone/releases
+App repo: https://github.com/csounder/DRC-Standalone (branch `lac-2026-csound7`)
 
 ---
 
@@ -20,11 +20,11 @@ Releases (DMG): https://github.com/mateolarreaferro/DRC-Standalone/releases
 
 ![Linux QR](https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https%3A%2F%2Fgithub.com%2Fcsounder%2FDr.C-Workshop-Demo%2Fblob%2Fmain%2FLINUX-ATTENDEE-HANDOUT.md)
 
-**Linux setup guide** — Csound 7 (not apt 6.x), Node 22, AppImage or clone, launch & verify
+**Linux setup guide** — Csound 7 (not apt 6.x), Node 22, clone `lac-2026-csound7`, launch & verify
 
 https://github.com/csounder/Dr.C-Workshop-Demo/blob/main/LINUX-ATTENDEE-HANDOUT.md
 
-Releases (AppImage): https://github.com/mateolarreaferro/DRC-Standalone/releases
+App repo: https://github.com/csounder/DRC-Standalone (branch `lac-2026-csound7`)
 
 ---
 
@@ -36,7 +36,7 @@ https://github.com/csounder/Dr.C-Workshop-Demo
 
 ```bash
 git clone https://github.com/csounder/Dr.C-Workshop-Demo.git
-git clone -b lac-2026-csound7 https://github.com/mateolarreaferro/DRC-Standalone.git ~/Dr.C-Standalone
+git clone -b lac-2026-csound7 https://github.com/csounder/DRC-Standalone ~/Dr.C-Standalone
 ```
 
 **Offline demo (no key):** Agent → **Load workshop FM bell (no key)** · Player → **Demos** → FM-Bell

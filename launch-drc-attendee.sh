@@ -8,7 +8,7 @@ DRC_ROOT="${DRC_STANDALONE_ROOT:-${HOME}/Dr.C-Standalone}"
 
 [[ -d "$DRC_ROOT" ]] || {
   echo "Dr.C Standalone not found at $DRC_ROOT"
-  echo "Clone: git clone https://github.com/mateolarreaferro/Dr.C-Standalone.git ~/Dr.C-Standalone"
+  echo "Clone: git clone -b lac-2026-csound7 https://github.com/mateolarreaferro/DRC-Standalone.git ~/Dr.C-Standalone"
   read -r -p "Press Enter to close..." || true
   exit 1
 }

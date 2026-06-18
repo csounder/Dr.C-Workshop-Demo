@@ -1,7 +1,7 @@
 # LAC 2026 — Dr.C Standalone (Linux attendee)
 
-**Your laptop** · branch **`lac-2026-csound7`** · min commit **`0cd5d22`** · v1.3.1  
-Repo: https://github.com/mateolarreaferro/Dr.C-Standalone · Releases: https://github.com/mateolarreaferro/Dr.C-Standalone/releases
+**Your laptop** · branch **`lac-2026-csound7`** · min commit **`68e0373`** · v1.3.1  
+Repo: https://github.com/csounder/DRC-Standalone
 
 > **No API key required** for offline demos (FM bell, Player, Web Apps).
 
@@ -27,14 +27,12 @@ node -v    # v22.x
 mkdir -p ~/bin && ln -sf ~/Applications/Csound/csound ~/bin/csound
 ```
 
-## 2. Get Dr.C — AppImage or git clone
+## 2. Get Dr.C — git clone
 
-**A — AppImage:** `DrC-*.AppImage` from [Releases](https://github.com/mateolarreaferro/Dr.C-Standalone/releases) → `chmod +x DrC-*.AppImage && ./DrC-*.AppImage`
-
-**B — Git clone:**
+**Git clone** (workshop build on `lac-2026-csound7`):
 
 ```bash
-git clone -b lac-2026-csound7 https://github.com/mateolarreaferro/Dr.C-Standalone.git ~/Dr.C-Standalone
+git clone -b lac-2026-csound7 https://github.com/csounder/DRC-Standalone ~/Dr.C-Standalone
 cd ~/Dr.C-Standalone && git pull && npm install && chmod +x launchers/*.sh scripts/*.sh
 cp .env.example .env   # optional
 ```
