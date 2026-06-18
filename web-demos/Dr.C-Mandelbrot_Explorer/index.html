@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dr.C - Mandelbrot Explorer | Fractal Sound Design</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg: #0a0e14;
+        --bg-light: #151a21;
+        --text: #e6e6e6;
+        --text-dim: #8a9199;
+        --accent: #00ff88;
+        --accent-dim: rgba(0, 255, 136, 0.2);
+        --border: #2a3039;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu,
+          Cantarell, sans-serif;
+        background: linear-gradient(135deg, #0a0e14 0%, #1a1f2e 100%);
+        color: var(--text);
+        line-height: 1.6;
+        overflow-x: hidden;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      header {
+        padding: 40px 0;
+        text-align: center;
+        background: var(--bg);
+        border-bottom: 2px solid var(--accent);
+      }
+
+      h1 {
+        font-size: 3.5em;
+        margin-bottom: 10px;
+        background: linear-gradient(135deg, var(--accent) 0%, #00ccff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .tagline {
+        font-size: 1.4em;
+        color: var(--text-dim);
+        margin-bottom: 30px;
+      }
+
+      .hero {
+        padding: 80px 0;
+        text-align: center;
+      }
+
+      .hero h2 {
+        font-size: 2.5em;
+        margin-bottom: 20px;
+        color: var(--accent);
+      }
+
+      .hero p {
+        font-size: 1.2em;
+        color: var(--text-dim);
+        max-width: 800px;
+        margin: 0 auto 40px;
+      }
+
+      .cta-buttons {
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 40px;
+      }
+
+      .btn {
+        padding: 15px 40px;
+        font-size: 1.1em;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-block;
+        transition: all 0.3s ease;
+        font-weight: 600;
+      }
+
+      .btn-primary {
+        background: var(--accent);
+        color: var(--bg);
+      }
+
+      .btn-primary:hover {
+        background: #00dd77;
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+      }
+
+      .btn-secondary {
+        background: var(--bg-light);
+        color: var(--accent);
+        border: 2px solid var(--accent);
+      }
+
+      .btn-secondary:hover {
+        background: var(--accent-dim);
+        transform: translateY(-2px);
+      }
+
+      .features {
+        padding: 80px 0;
+        background: var(--bg-light);
+      }
+
+      .features h2 {
+        text-align: center;
+        font-size: 2.5em;
+        margin-bottom: 60px;
+        color: var(--accent);
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 40px;
+      }
+
+      .feature-card {
+        background: var(--bg);
+        padding: 30px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        transition: all 0.3s ease;
+      }
+
+      .feature-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+      }
+
+      .feature-card h3 {
+        font-size: 1.5em;
+        margin-bottom: 15px;
+        color: var(--accent);
+      }
+
+      .feature-icon {
+        font-size: 3em;
+        margin-bottom: 15px;
+      }
+
+      .specs {
+        padding: 80px 0;
+      }
+
+      .specs h2 {
+        text-align: center;
+        font-size: 2.5em;
+        margin-bottom: 40px;
+        color: var(--accent);
+      }
+
+      .spec-list {
+        max-width: 800px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 20px;
+      }
+
+      .spec-item {
+        background: var(--bg-light);
+        padding: 20px;
+        border-radius: 8px;
+        border-left: 4px solid var(--accent);
+      }
+
+      .spec-item strong {
+        color: var(--accent);
+        display: block;
+        margin-bottom: 5px;
+      }
+
+      .docs-section {
+        padding: 80px 0;
+        background: var(--bg-light);
+      }
+
+      .docs-section h2 {
+        text-align: center;
+        font-size: 2.5em;
+        margin-bottom: 60px;
+        color: var(--accent);
+      }
+
+      .docs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+      }
+
+      .doc-card {
+        background: var(--bg);
+        padding: 30px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        text-align: center;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        color: var(--text);
+        display: block;
+      }
+
+      .doc-card:hover {
+        border-color: var(--accent);
+        transform: translateY(-5px);
+        box-shadow: 0 10px 30px rgba(0, 255, 136, 0.2);
+      }
+
+      .doc-icon {
+        font-size: 3em;
+        margin-bottom: 15px;
+      }
+
+      .doc-card h3 {
+        color: var(--accent);
+        margin-bottom: 10px;
+        font-size: 1.3em;
+      }
+
+      footer {
+        padding: 40px 0;
+        text-align: center;
+        background: var(--bg);
+        border-top: 2px solid var(--accent);
+        margin-top: 80px;
+      }
+
+      footer p {
+        color: var(--text-dim);
+      }
+
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2.5em;
+        }
+
+        .hero h2 {
+          font-size: 2em;
+        }
+
+        .hero p {
+          font-size: 1em;
+        }
+
+        .cta-buttons {
+          flex-direction: column;
+        }
+
+        .btn {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <h1>Dr.C - Mandelbrot Explorer</h1>
+        <p class="tagline">Where Fractals Become Music</p>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="container">
+        <h2>Transform Mathematical Beauty into Sound</h2>
+        <p>
+          A real-time fractal visualization and sonification engine powered by
+          Csound WASM. Explore the infinite depths of the Mandelbrot and Julia
+          sets while mapping fractal geometry to musical parameters through
+          sophisticated synthesis algorithms.
+        </p>
+        <div class="cta-buttons">
+          <a href="app-v2.1.html" class="btn btn-primary">🎵 Launch Explorer</a>
+          <a href="quickstart.html" class="btn btn-secondary">📖 Quick Start</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="features">
+      <div class="container">
+        <h2>Features</h2>
+        <div class="feature-grid">
+          <div class="feature-card">
+            <div class="feature-icon">🎨</div>
+            <h3>Real-Time Fractal Visualization</h3>
+            <p>
+              Explore Mandelbrot and Julia sets with smooth zooming, panning,
+              and animation. Choose from 6 stunning color schemes including
+              Fire, Rainbow, Ocean, and Psychedelic.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">🎹</div>
+            <h3>11 Synthesis Algorithms</h3>
+            <p>
+              Pluck, FM Bell, Additive Bell, Waveshaping, Organ, Granular,
+              Filtered Noise, Subtractive (Moog), FM Mallet, Waveguide String,
+              and Supersaw synthesis.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">🎼</div>
+            <h3>Musical Quantization</h3>
+            <p>
+              Map fractal data to scales (Major, Minor, Pentatonic, Blues,
+              Modes, Microtonal) and rhythmic grids (Whole notes to 128th notes,
+              dotted, and triplets).
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">✨</div>
+            <h3>Global Effects</h3>
+            <p>
+              Professional-grade Reverb, Echo, Chorus, and Flanger with
+              real-time parameter control and fractal-to-effect mapping.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">🎚️</div>
+            <h3>Parameter Mapping</h3>
+            <p>
+              Map 6 fractal parameters (Iteration, Position X/Y, Smoothness,
+              Angle, Magnitude) to 8 synthesis targets and 6 effect parameters.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">💾</div>
+            <h3>45 Factory Presets</h3>
+            <p>
+              3 presets per instrument and 2 per visual style, professionally
+              designed to showcase the sonic possibilities. Save unlimited
+              custom presets.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>Csound WASM v7</h3>
+            <p>
+              Real-time audio synthesis in the browser with zero latency using
+              the latest Csound WebAssembly technology.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">🎲</div>
+            <h3>Randomize & Explore</h3>
+            <p>
+              One-click randomization of all parameters for instant sonic
+              discovery. Perfect for finding unexpected musical combinations.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="specs">
+      <div class="container">
+        <h2>Technical Specifications</h2>
+        <div class="spec-list">
+          <div class="spec-item">
+            <strong>Audio Engine</strong>
+            Csound WASM 7.0.0-beta26 with functional syntax
+          </div>
+          <div class="spec-item">
+            <strong>Sample Rate</strong>
+            44.1 kHz, 32 samples per k-cycle
+          </div>
+          <div class="spec-item">
+            <strong>Synthesis Types</strong>
+            11 unique synthesis algorithms
+          </div>
+          <div class="spec-item">
+            <strong>Effects</strong>
+            4 global effects buses (Reverb, Echo, Chorus, Flanger)
+          </div>
+          <div class="spec-item">
+            <strong>Scales</strong>
+            20 scale types including 12-TET and microtonal systems
+          </div>
+          <div class="spec-item">
+            <strong>Rhythms</strong>
+            25 rhythmic quantization options
+          </div>
+          <div class="spec-item">
+            <strong>Fractal Types</strong>
+            Mandelbrot Set and Julia Set with infinite zoom
+          </div>
+          <div class="spec-item">
+            <strong>Rendering</strong>
+            CPU Canvas 2D and GPU WebGL modes
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="docs-section">
+      <div class="container">
+        <h2>Documentation</h2>
+        <div class="docs-grid">
+          <a href="quickstart.html" class="doc-card">
+            <div class="doc-icon">🚀</div>
+            <h3>Quick Start</h3>
+            <p>Get up and running in 5 minutes</p>
+          </a>
+
+          <a href="users-guide.html" class="doc-card">
+            <div class="doc-icon">📚</div>
+            <h3>User's Guide</h3>
+            <p>Complete feature documentation</p>
+          </a>
+
+          <a href="technical-guide.html" class="doc-card">
+            <div class="doc-icon">⚙️</div>
+            <h3>Technical Guide</h3>
+            <p>Code architecture and implementation</p>
+          </a>
+
+          <a href="app-v2.1.html" class="doc-card">
+            <div class="doc-icon">🎵</div>
+            <h3>Launch App</h3>
+            <p>Start exploring now</p>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <p>&copy; 2024 Dr.C - Mandelbrot Explorer</p>
+        <p style="margin-top: 10px">
+          Powered by Csound WASM | Created with ♥ for fractal sound design
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

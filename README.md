@@ -48,5 +48,6 @@ Linux: run `./launch-drc-attendee.sh` (or `launch-drc-standalone.sh` / `launch-d
 ## What's in this folder
 
 - **`player-demos/`** — sample CSDs for the Player
+- **`web-demos/`** — ten browser Web Apps (gallery: run `python3 -m http.server 8080` inside `web-demos/`)
 - **`pluck_bass*.csd`** — simple compile / play examples
 - **`pluck_bass_web.html`**, **`pluck_bass_cabbage.html`** — web export examples

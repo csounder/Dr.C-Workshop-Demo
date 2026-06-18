@@ -1,0 +1,531 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dr.C - StarSound | Transform the Night Sky into Sound</title>
+    <link rel="icon" href="favicon.ico" type="image/x-icon" />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background: linear-gradient(
+          135deg,
+          #0f0c29 0%,
+          #302b63 50%,
+          #24243e 100%
+        );
+        color: #e0e6ff;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+      }
+
+      .stars-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 0;
+        opacity: 0.3;
+      }
+
+      .star {
+        position: absolute;
+        width: 2px;
+        height: 2px;
+        background: white;
+        border-radius: 50%;
+        animation: twinkle 3s infinite;
+      }
+
+      @keyframes twinkle {
+        0%,
+        100% {
+          opacity: 0.3;
+        }
+        50% {
+          opacity: 1;
+        }
+      }
+
+      header {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        padding: 60px 20px 40px;
+      }
+
+      h1 {
+        font-size: 4em;
+        font-weight: 900;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        margin-bottom: 10px;
+        text-shadow: 0 0 30px rgba(102, 126, 234, 0.5);
+      }
+
+      .subtitle {
+        font-size: 1.5em;
+        color: #93c5fd;
+        margin-bottom: 30px;
+        font-weight: 300;
+      }
+
+      .tagline {
+        font-size: 1.1em;
+        color: #cbd5e1;
+        max-width: 600px;
+        margin: 0 auto 40px;
+        line-height: 1.6;
+      }
+
+      main {
+        position: relative;
+        z-index: 1;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px 60px;
+      }
+
+      .cta-section {
+        text-align: center;
+        margin-bottom: 60px;
+      }
+
+      .launch-btn {
+        display: inline-block;
+        padding: 20px 60px;
+        font-size: 1.5em;
+        font-weight: bold;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        text-decoration: none;
+        border-radius: 50px;
+        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.4);
+        transition: all 0.3s ease;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .launch-btn:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 50px rgba(102, 126, 234, 0.6);
+      }
+
+      .secondary-links {
+        margin-top: 20px;
+        display: flex;
+        gap: 20px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .secondary-btn {
+        padding: 10px 30px;
+        font-size: 1em;
+        background: rgba(96, 165, 250, 0.1);
+        color: #93c5fd;
+        text-decoration: none;
+        border-radius: 25px;
+        border: 1px solid #60a5fa;
+        transition: all 0.3s ease;
+      }
+
+      .secondary-btn:hover {
+        background: rgba(96, 165, 250, 0.2);
+        border-color: #93c5fd;
+      }
+
+      .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-bottom: 60px;
+      }
+
+      .feature-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(96, 165, 250, 0.3);
+        border-radius: 15px;
+        padding: 30px;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(96, 165, 250, 0.6);
+        box-shadow: 0 10px 30px rgba(96, 165, 250, 0.2);
+      }
+
+      .feature-icon {
+        font-size: 3em;
+        margin-bottom: 15px;
+      }
+
+      .feature-title {
+        font-size: 1.5em;
+        color: #60a5fa;
+        margin-bottom: 10px;
+        font-weight: 600;
+      }
+
+      .feature-desc {
+        color: #cbd5e1;
+        line-height: 1.6;
+      }
+
+      .demo-video {
+        text-align: center;
+        margin-bottom: 60px;
+      }
+
+      .video-placeholder {
+        background: rgba(0, 0, 0, 0.3);
+        border: 2px dashed rgba(96, 165, 250, 0.5);
+        border-radius: 15px;
+        padding: 60px;
+        color: #93c5fd;
+        font-size: 1.2em;
+      }
+
+      .quick-start {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(96, 165, 250, 0.3);
+        border-radius: 15px;
+        padding: 40px;
+        margin-bottom: 60px;
+      }
+
+      .quick-start h2 {
+        color: #60a5fa;
+        font-size: 2em;
+        margin-bottom: 20px;
+      }
+
+      .quick-start ol {
+        list-style-position: inside;
+        color: #cbd5e1;
+        font-size: 1.1em;
+        line-height: 2;
+      }
+
+      .quick-start li {
+        margin-bottom: 10px;
+      }
+
+      footer {
+        position: relative;
+        z-index: 1;
+        text-align: center;
+        padding: 40px 20px;
+        border-top: 1px solid rgba(96, 165, 250, 0.2);
+        color: #94a3b8;
+      }
+
+      footer a {
+        color: #60a5fa;
+        text-decoration: none;
+      }
+
+      footer a:hover {
+        text-decoration: underline;
+      }
+
+      .keyboard-shortcuts {
+        display: flex;
+        gap: 10px;
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 30px;
+      }
+
+      .key {
+        background: rgba(96, 165, 250, 0.1);
+        border: 1px solid #60a5fa;
+        border-radius: 5px;
+        padding: 8px 12px;
+        font-family: monospace;
+        font-size: 0.9em;
+        color: #93c5fd;
+      }
+
+      .version-selector {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        margin-top: 20px;
+        flex-wrap: wrap;
+      }
+
+      .version-btn {
+        padding: 12px 30px;
+        font-size: 1em;
+        background: rgba(96, 165, 250, 0.15);
+        color: #e0e6ff;
+        text-decoration: none;
+        border-radius: 15px;
+        border: 2px solid #60a5fa;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+        min-width: 140px;
+      }
+
+      .version-btn:hover {
+        background: rgba(96, 165, 250, 0.3);
+        border-color: #93c5fd;
+        transform: translateY(-2px);
+      }
+
+      .version-icon {
+        font-size: 2em;
+      }
+
+      .version-label {
+        font-weight: bold;
+        color: #93c5fd;
+      }
+
+      .version-desc {
+        font-size: 0.85em;
+        color: #cbd5e1;
+      }
+
+      @media (max-width: 768px) {
+        h1 {
+          font-size: 2.5em;
+        }
+
+        .subtitle {
+          font-size: 1.2em;
+        }
+
+        .launch-btn {
+          font-size: 1.2em;
+          padding: 15px 40px;
+        }
+
+        .features {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Animated stars background -->
+    <div class="stars-bg" id="starfield"></div>
+
+    <header>
+      <h1>⭐ Dr.C - StarSound</h1>
+      <p class="subtitle">Transform the Night Sky into Sound</p>
+      <p class="tagline">
+        Real-time interactive star sonification powered by Csound synthesis.
+        Explore the cosmos through sound.
+      </p>
+    </header>
+
+    <main>
+      <!-- CTA Section -->
+      <section class="cta-section">
+        <h2 style="font-size: 1.8em; color: #60a5fa; margin-bottom: 20px">
+          Choose Your Version
+        </h2>
+
+        <div class="version-selector">
+          <a href="app-desktop.html" class="version-btn">
+            <div class="version-icon">💻</div>
+            <div class="version-label">Desktop</div>
+            <div class="version-desc">
+              Full controls<br />Keyboard shortcuts
+            </div>
+          </a>
+
+          <a href="app-mobile.html" class="version-btn">
+            <div class="version-icon">📱</div>
+            <div class="version-label">Mobile</div>
+            <div class="version-desc">Touch optimized<br />Swipe gestures</div>
+          </a>
+
+          <a href="app.html" class="version-btn">
+            <div class="version-icon">🌐</div>
+            <div class="version-label">Auto-Detect</div>
+            <div class="version-desc">Responsive<br />Works on all devices</div>
+          </a>
+        </div>
+
+        <div class="secondary-links">
+          <a href="QUICKSTART.md" class="secondary-btn">📖 Quick Start Guide</a>
+          <a href="README.md" class="secondary-btn">📚 Full Documentation</a>
+          <a href="https://github.com/csounder/starsound" class="secondary-btn"
+            >💻 GitHub</a
+          >
+        </div>
+      </section>
+
+      <!-- Features -->
+      <section class="features">
+        <div class="feature-card">
+          <div class="feature-icon">🎵</div>
+          <h3 class="feature-title">35 Instruments</h3>
+          <p class="feature-desc">
+            From ethereal pads to exotic chirps. Standard synthesis, advanced
+            algorithms, and organic textures.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🎛️</div>
+          <h3 class="feature-title">9 Multitimbral Presets</h3>
+          <p class="feature-desc">
+            Layer 4 voices with independent instruments. Cosmic Choir, Bell
+            Garden, Alien Forest, and more.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🌌</div>
+          <h3 class="feature-title">3 Sonification Modes</h3>
+          <p class="feature-desc">
+            Position/Brightness, Color/Temperature, or Constellation Patterns.
+            Each reveals different sonic dimensions.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🖱️</div>
+          <h3 class="feature-title">3 Interaction Modes</h3>
+          <p class="feature-desc">
+            Mouse/Touch hover, automated scanning, or region selection. Play the
+            sky your way.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">⌨️</div>
+          <h3 class="feature-title">Full Keyboard Control</h3>
+          <p class="feature-desc">
+            Navigate with WASD, switch modes with hotkeys, randomize with X.
+            Fast, intuitive control.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🎲</div>
+          <h3 class="feature-title">One-Click Randomize</h3>
+          <p class="feature-desc">
+            Shuffle all settings instantly. Discover unexpected sonic
+            combinations and cosmic soundscapes.
+          </p>
+        </div>
+      </section>
+
+      <!-- Quick Start -->
+      <section class="quick-start">
+        <h2>🚀 Get Started in 2 Minutes</h2>
+        <ol>
+          <li><strong>Click "Launch StarSound"</strong> above</li>
+          <li><strong>Start Audio Engine</strong> - Click the ▶ button</li>
+          <li>
+            <strong>Hover over stars</strong> - Move your cursor to hear them
+          </li>
+          <li>
+            <strong>Try a preset</strong> - Select from 23 mono or 9
+            multitimbral presets
+          </li>
+          <li>
+            <strong>Press X</strong> - Randomize everything for instant
+            discovery
+          </li>
+        </ol>
+
+        <div class="keyboard-shortcuts">
+          <span class="key">M = Mouse</span>
+          <span class="key">S = Scan</span>
+          <span class="key">R = Region</span>
+          <span class="key">Space = Toggle</span>
+          <span class="key">1/2/3 = Modes</span>
+          <span class="key">X = Randomize</span>
+        </div>
+      </section>
+
+      <!-- Demo Video Placeholder -->
+      <section class="demo-video">
+        <div class="video-placeholder">
+          📹 Demo video coming soon!<br />
+          Experience real-time star sonification in action.
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>
+        <strong>Dr.C - StarSound</strong> | Created by Dr. Richard Boulanger
+      </p>
+      <p>
+        Powered by
+        <a href="https://csound.com" target="_blank">Csound</a> | Open Source |
+        <a href="https://github.com/csounder/starsound" target="_blank"
+          >View on GitHub</a
+        >
+      </p>
+      <p style="margin-top: 20px; font-size: 0.9em">
+        Explore the cosmos through sound. Every star has a voice. 🌟🎵
+      </p>
+    </footer>
+
+    <script>
+      // Generate animated star background
+      const starfield = document.getElementById("starfield");
+      for (let i = 0; i < 100; i++) {
+        const star = document.createElement("div");
+        star.className = "star";
+        star.style.left = Math.random() * 100 + "%";
+        star.style.top = Math.random() * 100 + "%";
+        star.style.animationDelay = Math.random() * 3 + "s";
+        star.style.animationDuration = 2 + Math.random() * 3 + "s";
+        starfield.appendChild(star);
+      }
+
+      // Auto-detect device and highlight recommended version
+      function isMobileDevice() {
+        return (
+          /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+            navigator.userAgent,
+          ) || window.innerWidth <= 768
+        );
+      }
+
+      // Add visual indicator for recommended version
+      window.addEventListener("DOMContentLoaded", () => {
+        const versionBtns = document.querySelectorAll(".version-btn");
+        if (isMobileDevice()) {
+          // Highlight mobile version
+          versionBtns[1].style.background = "rgba(96, 165, 250, 0.3)";
+          versionBtns[1].style.borderColor = "#93c5fd";
+          versionBtns[1].innerHTML +=
+            '<div style="margin-top: 5px; font-size: 0.8em; color: #34d399;">✓ Recommended</div>';
+        } else {
+          // Highlight desktop version
+          versionBtns[0].style.background = "rgba(96, 165, 250, 0.3)";
+          versionBtns[0].style.borderColor = "#93c5fd";
+          versionBtns[0].innerHTML +=
+            '<div style="margin-top: 5px; font-size: 0.8em; color: #34d399;">✓ Recommended</div>';
+        }
+      });
+    </script>
+  </body>
+</html>

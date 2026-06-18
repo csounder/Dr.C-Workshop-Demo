@@ -1,0 +1,206 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dr.C Web App Demos — LAC 2026 Workshop</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial, sans-serif;
+        background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
+        color: #e8ecff;
+        min-height: 100vh;
+        line-height: 1.5;
+      }
+
+      .wrap {
+        max-width: 920px;
+        margin: 0 auto;
+        padding: 48px 24px 64px;
+      }
+
+      header {
+        margin-bottom: 40px;
+      }
+
+      h1 {
+        font-size: clamp(1.8rem, 4vw, 2.4rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        background: linear-gradient(135deg, #a78bfa 0%, #60a5fa 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+
+      .subtitle {
+        margin-top: 10px;
+        color: #b8c0e0;
+        font-size: 1.05rem;
+      }
+
+      .note {
+        margin-top: 20px;
+        padding: 14px 18px;
+        background: rgba(255, 255, 255, 0.06);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        font-size: 0.92rem;
+        color: #c8d0f0;
+      }
+
+      .note strong {
+        color: #fff;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 16px;
+      }
+
+      .card {
+        display: block;
+        padding: 20px 22px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.12);
+        border-radius: 12px;
+        text-decoration: none;
+        color: inherit;
+        transition:
+          transform 0.15s ease,
+          border-color 0.15s ease,
+          background 0.15s ease;
+      }
+
+      .card:hover {
+        transform: translateY(-2px);
+        border-color: rgba(167, 139, 250, 0.5);
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .card h2 {
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #fff;
+        margin-bottom: 6px;
+      }
+
+      .card p {
+        font-size: 0.88rem;
+        color: #a8b4d8;
+      }
+
+      .card .tag {
+        display: inline-block;
+        margin-top: 10px;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+        color: #818cf8;
+      }
+
+      footer {
+        margin-top: 48px;
+        font-size: 0.85rem;
+        color: #8892b8;
+      }
+
+      footer code {
+        background: rgba(0, 0, 0, 0.25);
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.82rem;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header>
+        <h1>Dr.C Web App Demos</h1>
+        <p class="subtitle">LAC 2026 workshop · Csound 7 in the browser</p>
+        <div class="note">
+          <strong>Start Audio</strong> in each app after opening.
+          <strong>Internet</strong> required for Csound WASM (CDN).
+          See <a href="README.md" style="color: #93c5fd">README.md</a> for local server setup.
+        </div>
+      </header>
+
+      <div class="grid">
+        <a class="card" href="Dr.C-Etude1/index.html">
+          <h2>Etude #1</h2>
+          <p>Generative audio-visual composition with interactive controls.</p>
+          <span class="tag">Dr.C-Etude1</span>
+        </a>
+
+        <a class="card" href="Dr.C-Weather_Sonification/index.html">
+          <h2>Weather Sonification</h2>
+          <p>Live weather data transformed into evolving soundscapes.</p>
+          <span class="tag">Dr.C-Weather_Sonification</span>
+        </a>
+
+        <a class="card" href="Dr.C-DrumMachine/index.html">
+          <h2>Drum Machine</h2>
+          <p>Pattern-based drum sequencer with Csound synthesis.</p>
+          <span class="tag">Dr.C-DrumMachine</span>
+        </a>
+
+        <a class="card" href="Dr.C-StarChart_Sonification/index.html">
+          <h2>Star Chart Sonification</h2>
+          <p>Map constellations and stars into musical parameters.</p>
+          <span class="tag">Dr.C-StarChart_Sonification</span>
+        </a>
+
+        <a class="card" href="Dr.C-Fractal_Explorer-L_Systems/index.html">
+          <h2>Fractal Explorer (L-Systems)</h2>
+          <p>Draw and sonify Lindenmayer-system fractal growth.</p>
+          <span class="tag">Dr.C-Fractal_Explorer-L_Systems</span>
+        </a>
+
+        <a class="card" href="Dr.C-Mandelbrot_Explorer/index.html">
+          <h2>Mandelbrot Explorer</h2>
+          <p>Navigate the Mandelbrot set and hear its geometry.</p>
+          <span class="tag">Dr.C-Mandelbrot_Explorer</span>
+        </a>
+
+        <a class="card" href="Dr.C-FM_Explorer-Fibonacci_Version/index.html">
+          <h2>FM Explorer (Fibonacci)</h2>
+          <p>Fibonacci-ratio FM synthesis with rich timbral exploration.</p>
+          <span class="tag">Dr.C-FM_Explorer-Fibonacci_Version</span>
+        </a>
+
+        <a class="card" href="Dr.C-FM_Simple/index.html">
+          <h2>FM Simple</h2>
+          <p>Accessible FM synth with curated presets.</p>
+          <span class="tag">Dr.C-FM_Simple</span>
+        </a>
+
+        <a class="card" href="Dr.C-FM_Synth/index.html">
+          <h2>FM Synth</h2>
+          <p>FM synthesizer with waveform display, keyboard, and arpeggiator.</p>
+          <span class="tag">Dr.C-FM_Synth</span>
+        </a>
+
+        <a class="card" href="Dr.C_Fibonacci_Pads/index.html">
+          <h2>Fibonacci Pads</h2>
+          <p>Pad synthesizer driven by Fibonacci harmonic relationships.</p>
+          <span class="tag">Dr.C_Fibonacci_Pads</span>
+        </a>
+      </div>
+
+      <footer>
+        Run locally:
+        <code>cd web-demos && python3 -m http.server 8080</code>
+        → http://localhost:8080
+      </footer>
+    </div>
+  </body>
+</html>

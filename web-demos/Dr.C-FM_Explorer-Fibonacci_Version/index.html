@@ -1,0 +1,969 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dr.C — Fibonacci FM Explorer</title>
+    <style>
+      /* ── Reset & Base ── */
+      *,
+      *::before,
+      *::after {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --gold: #c9a84c;
+        --gold-light: #e8d48b;
+        --gold-dark: #8b6914;
+        --cream: #faf6eb;
+        --cream-dark: #f0e8d0;
+        --ink: #1a1a1a;
+        --ink-soft: #3d3d3d;
+        --warm-white: #fffdf7;
+        --radius: 12px;
+        --phi: 1.618;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        font-family:
+          "Palatino Linotype", Palatino, "Book Antiqua", Georgia, serif;
+        background: var(--warm-white);
+        color: var(--ink);
+        line-height: 1.618;
+        overflow-x: hidden;
+      }
+
+      /* ── Golden Spiral Background ── */
+      .spiral-bg {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+        opacity: 0.06;
+      }
+
+      .spiral-bg::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 140vmax;
+        height: 140vmax;
+        transform: translate(-50%, -50%);
+        background:
+          conic-gradient(
+            from 0deg at 61.8% 38.2%,
+            transparent 0deg,
+            var(--gold) 90deg,
+            transparent 90.5deg
+          ),
+          conic-gradient(
+            from 90deg at 38.2% 38.2%,
+            transparent 0deg,
+            var(--gold-dark) 90deg,
+            transparent 90.5deg
+          ),
+          conic-gradient(
+            from 180deg at 38.2% 61.8%,
+            transparent 0deg,
+            var(--gold) 90deg,
+            transparent 90.5deg
+          ),
+          conic-gradient(
+            from 270deg at 61.8% 61.8%,
+            transparent 0deg,
+            var(--gold-dark) 90deg,
+            transparent 90.5deg
+          );
+      }
+
+      .spiral-bg::after {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 80vmax;
+        height: 80vmax;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        border: 2px solid var(--gold);
+        opacity: 0.4;
+      }
+
+      /* ── Fibonacci Dots ── */
+      .fib-dots {
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        z-index: 0;
+        overflow: hidden;
+      }
+
+      .fib-dot {
+        position: absolute;
+        border-radius: 50%;
+        background: var(--gold);
+        opacity: 0;
+        animation: fib-pulse 8s ease-in-out infinite;
+      }
+
+      .fib-dot:nth-child(1) {
+        width: 3px;
+        height: 3px;
+        top: 15%;
+        left: 10%;
+        animation-delay: 0s;
+      }
+      .fib-dot:nth-child(2) {
+        width: 3px;
+        height: 3px;
+        top: 25%;
+        left: 85%;
+        animation-delay: 1s;
+      }
+      .fib-dot:nth-child(3) {
+        width: 5px;
+        height: 5px;
+        top: 40%;
+        left: 5%;
+        animation-delay: 2s;
+      }
+      .fib-dot:nth-child(4) {
+        width: 5px;
+        height: 5px;
+        top: 55%;
+        left: 92%;
+        animation-delay: 3s;
+      }
+      .fib-dot:nth-child(5) {
+        width: 8px;
+        height: 8px;
+        top: 70%;
+        left: 15%;
+        animation-delay: 0.5s;
+      }
+      .fib-dot:nth-child(6) {
+        width: 8px;
+        height: 8px;
+        top: 20%;
+        left: 70%;
+        animation-delay: 1.5s;
+      }
+      .fib-dot:nth-child(7) {
+        width: 13px;
+        height: 13px;
+        top: 80%;
+        left: 80%;
+        animation-delay: 2.5s;
+      }
+      .fib-dot:nth-child(8) {
+        width: 13px;
+        height: 13px;
+        top: 10%;
+        left: 45%;
+        animation-delay: 4s;
+      }
+      .fib-dot:nth-child(9) {
+        width: 5px;
+        height: 5px;
+        top: 60%;
+        left: 50%;
+        animation-delay: 5s;
+      }
+      .fib-dot:nth-child(10) {
+        width: 8px;
+        height: 8px;
+        top: 90%;
+        left: 35%;
+        animation-delay: 6s;
+      }
+      .fib-dot:nth-child(11) {
+        width: 3px;
+        height: 3px;
+        top: 35%;
+        left: 30%;
+        animation-delay: 3.5s;
+      }
+      .fib-dot:nth-child(12) {
+        width: 5px;
+        height: 5px;
+        top: 75%;
+        left: 60%;
+        animation-delay: 7s;
+      }
+      .fib-dot:nth-child(13) {
+        width: 13px;
+        height: 13px;
+        top: 45%;
+        left: 75%;
+        animation-delay: 4.5s;
+      }
+
+      @keyframes fib-pulse {
+        0%,
+        100% {
+          opacity: 0;
+          transform: scale(0.5);
+        }
+        50% {
+          opacity: 0.25;
+          transform: scale(1);
+        }
+      }
+
+      /* ── Layout ── */
+      .content {
+        position: relative;
+        z-index: 1;
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 24px;
+      }
+
+      section {
+        padding: 80px 0;
+      }
+
+      /* ── Hero ── */
+      .hero {
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 60px 0;
+      }
+
+      /* Golden spiral SVG motif */
+      .spiral-motif {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 32px;
+        opacity: 0.7;
+        animation: slow-spin 60s linear infinite;
+      }
+
+      @keyframes slow-spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
+      .hero-label {
+        font-size: 0.85rem;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--gold-dark);
+        margin-bottom: 16px;
+        font-weight: normal;
+      }
+
+      .hero h1 {
+        font-size: clamp(2.4rem, 6vw, 4rem);
+        font-weight: normal;
+        line-height: 1.2;
+        color: var(--ink);
+        margin-bottom: 8px;
+      }
+
+      .hero h1 em {
+        font-style: italic;
+        color: var(--gold-dark);
+      }
+
+      .hero-sub {
+        font-size: clamp(1rem, 2.5vw, 1.25rem);
+        color: var(--ink-soft);
+        max-width: 560px;
+        margin: 0 auto 12px;
+      }
+
+      .hero-equation {
+        font-family: "Times New Roman", Times, serif;
+        font-size: 1.1rem;
+        color: var(--gold-dark);
+        letter-spacing: 0.05em;
+        margin-bottom: 40px;
+        opacity: 0.8;
+      }
+
+      .hero-equation span {
+        font-style: italic;
+      }
+
+      /* ── Buttons ── */
+      .btn-launch {
+        display: inline-block;
+        padding: 18px 52px;
+        font-family: inherit;
+        font-size: 1.15rem;
+        color: var(--warm-white);
+        background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+        border: none;
+        border-radius: 50px;
+        text-decoration: none;
+        cursor: pointer;
+        transition:
+          transform 0.25s,
+          box-shadow 0.25s;
+        box-shadow: 0 4px 24px rgba(201, 168, 76, 0.3);
+        letter-spacing: 0.05em;
+      }
+
+      .btn-launch:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 32px rgba(201, 168, 76, 0.45);
+      }
+
+      .btn-launch:active {
+        transform: translateY(0);
+      }
+
+      .hero-links {
+        margin-top: 24px;
+        display: flex;
+        gap: 28px;
+        justify-content: center;
+        flex-wrap: wrap;
+      }
+
+      .hero-links a {
+        font-size: 0.9rem;
+        color: var(--gold-dark);
+        text-decoration: none;
+        border-bottom: 1px solid transparent;
+        transition: border-color 0.2s;
+      }
+
+      .hero-links a:hover {
+        border-bottom-color: var(--gold-dark);
+      }
+
+      /* ── Divider ── */
+      .divider {
+        text-align: center;
+        color: var(--gold);
+        font-size: 1.4rem;
+        letter-spacing: 0.6em;
+        opacity: 0.5;
+        padding: 0;
+        user-select: none;
+      }
+
+      /* ── Features ── */
+      .features {
+        padding-top: 60px;
+        padding-bottom: 60px;
+      }
+
+      .section-title {
+        font-size: 0.8rem;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        color: var(--gold-dark);
+        text-align: center;
+        margin-bottom: 48px;
+        font-weight: normal;
+      }
+
+      .feature-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 32px;
+      }
+
+      .feature-card {
+        background: var(--cream);
+        border-radius: var(--radius);
+        padding: 32px 28px;
+        border: 1px solid var(--cream-dark);
+        transition:
+          transform 0.25s,
+          box-shadow 0.25s;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 28px rgba(139, 105, 20, 0.08);
+      }
+
+      .feature-icon {
+        font-size: 1.6rem;
+        margin-bottom: 12px;
+        display: block;
+      }
+
+      .feature-card h3 {
+        font-size: 1.1rem;
+        font-weight: normal;
+        color: var(--ink);
+        margin-bottom: 8px;
+      }
+
+      .feature-card p {
+        font-size: 0.92rem;
+        color: var(--ink-soft);
+        line-height: 1.6;
+      }
+
+      /* ── Fibonacci Sequence Strip ── */
+      .fib-strip {
+        display: flex;
+        justify-content: center;
+        align-items: baseline;
+        gap: 12px;
+        padding: 40px 0;
+        flex-wrap: wrap;
+      }
+
+      .fib-strip span {
+        font-family: "Times New Roman", Times, serif;
+        font-style: italic;
+        color: var(--gold);
+        opacity: 0.6;
+      }
+
+      .fib-strip span:nth-child(1) {
+        font-size: 0.7rem;
+      }
+      .fib-strip span:nth-child(2) {
+        font-size: 0.7rem;
+      }
+      .fib-strip span:nth-child(3) {
+        font-size: 0.8rem;
+      }
+      .fib-strip span:nth-child(4) {
+        font-size: 0.9rem;
+      }
+      .fib-strip span:nth-child(5) {
+        font-size: 1rem;
+      }
+      .fib-strip span:nth-child(6) {
+        font-size: 1.1rem;
+      }
+      .fib-strip span:nth-child(7) {
+        font-size: 1.3rem;
+      }
+      .fib-strip span:nth-child(8) {
+        font-size: 1.5rem;
+      }
+      .fib-strip span:nth-child(9) {
+        font-size: 1.8rem;
+      }
+      .fib-strip span:nth-child(10) {
+        font-size: 2.1rem;
+      }
+      .fib-strip span:nth-child(11) {
+        font-size: 2.5rem;
+      }
+      .fib-strip span:nth-child(12) {
+        font-size: 3rem;
+      }
+      .fib-strip span:nth-child(13) {
+        font-size: 3.6rem;
+        opacity: 0.35;
+      }
+
+      /* ── About ── */
+      .about {
+        text-align: center;
+        padding-top: 40px;
+        padding-bottom: 60px;
+      }
+
+      .about-text {
+        max-width: 620px;
+        margin: 0 auto;
+        font-size: 1.05rem;
+        color: var(--ink-soft);
+        line-height: 1.8;
+      }
+
+      .about-text + .about-text {
+        margin-top: 20px;
+      }
+
+      .about-credit {
+        margin-top: 36px;
+        font-size: 0.95rem;
+        color: var(--ink);
+      }
+
+      .about-credit strong {
+        font-weight: 600;
+      }
+
+      .about-affiliation {
+        font-size: 0.88rem;
+        color: var(--gold-dark);
+        margin-top: 4px;
+      }
+
+      /* ── Docs ── */
+      .docs {
+        text-align: center;
+        padding-top: 40px;
+        padding-bottom: 60px;
+      }
+
+      .doc-links {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+        margin-top: 32px;
+      }
+
+      .doc-card {
+        display: block;
+        padding: 24px 36px;
+        background: var(--cream);
+        border: 1px solid var(--cream-dark);
+        border-radius: var(--radius);
+        text-decoration: none;
+        color: var(--ink);
+        transition:
+          transform 0.25s,
+          box-shadow 0.25s,
+          border-color 0.25s;
+        min-width: 220px;
+      }
+
+      .doc-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(139, 105, 20, 0.1);
+        border-color: var(--gold-light);
+      }
+
+      .doc-card-title {
+        font-size: 1.05rem;
+        margin-bottom: 4px;
+      }
+
+      .doc-card-desc {
+        font-size: 0.82rem;
+        color: var(--ink-soft);
+      }
+
+      /* ── Footer ── */
+      footer {
+        text-align: center;
+        padding: 40px 24px;
+        border-top: 1px solid var(--cream-dark);
+        color: var(--ink-soft);
+        font-size: 0.82rem;
+      }
+
+      footer a {
+        color: var(--gold-dark);
+        text-decoration: none;
+      }
+
+      footer a:hover {
+        text-decoration: underline;
+      }
+
+      .footer-csound {
+        margin-top: 8px;
+        font-size: 0.78rem;
+        opacity: 0.7;
+      }
+
+      /* ── Golden Ratio Boxes (decorative) ── */
+      .phi-boxes {
+        display: flex;
+        justify-content: center;
+        gap: 6px;
+        margin: 48px auto 0;
+        opacity: 0.15;
+      }
+
+      .phi-box {
+        border: 1.5px solid var(--gold);
+        border-radius: 3px;
+      }
+
+      .phi-box:nth-child(1) {
+        width: 8px;
+        height: 8px;
+      }
+      .phi-box:nth-child(2) {
+        width: 8px;
+        height: 8px;
+      }
+      .phi-box:nth-child(3) {
+        width: 13px;
+        height: 13px;
+      }
+      .phi-box:nth-child(4) {
+        width: 21px;
+        height: 21px;
+      }
+      .phi-box:nth-child(5) {
+        width: 34px;
+        height: 34px;
+      }
+
+      /* ── Responsive ── */
+      @media (max-width: 640px) {
+        section {
+          padding: 56px 0;
+        }
+
+        .hero {
+          min-height: auto;
+          padding: 100px 0 60px;
+        }
+
+        .spiral-motif {
+          width: 80px;
+          height: 80px;
+          margin-bottom: 24px;
+        }
+
+        .btn-launch {
+          padding: 16px 40px;
+          font-size: 1.05rem;
+        }
+
+        .feature-grid {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+
+        .feature-card {
+          padding: 24px 20px;
+        }
+
+        .fib-strip {
+          gap: 8px;
+        }
+
+        .doc-links {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .doc-card {
+          width: 100%;
+          max-width: 300px;
+        }
+      }
+
+      /* ── Entrance Animations ── */
+      @media (prefers-reduced-motion: no-preference) {
+        .hero-label,
+        .hero h1,
+        .hero-sub,
+        .hero-equation,
+        .btn-launch,
+        .hero-links {
+          animation: fade-up 0.8s ease-out both;
+        }
+
+        .hero-label {
+          animation-delay: 0.1s;
+        }
+        .hero h1 {
+          animation-delay: 0.25s;
+        }
+        .hero-sub {
+          animation-delay: 0.4s;
+        }
+        .hero-equation {
+          animation-delay: 0.5s;
+        }
+        .btn-launch {
+          animation-delay: 0.6s;
+        }
+        .hero-links {
+          animation-delay: 0.7s;
+        }
+      }
+
+      @keyframes fade-up {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Decorative background -->
+    <div class="spiral-bg"></div>
+    <div class="fib-dots">
+      <div class="fib-dot"></div>
+      <div class="fib-dot"></div>
+      <div class="fib-dot"></div>
+      <div class="fib-dot"></div>
+      <div class="fib-dot"></div>
+      <div class="fib-dot"></div>
+      <div class="fib-dot"></div>
+      <div class="fib-dot"></div>
+      <div class="fib-dot"></div>
+      <div class="fib-dot"></div>
+      <div class="fib-dot"></div>
+      <div class="fib-dot"></div>
+      <div class="fib-dot"></div>
+    </div>
+
+    <div class="content">
+      <!-- ── Hero ── -->
+      <section class="hero">
+        <!-- Golden Spiral SVG -->
+        <svg
+          class="spiral-motif"
+          viewBox="0 0 200 200"
+          fill="none"
+          stroke-linecap="round"
+        >
+          <path
+            d="
+          M 123.6,76.4
+          A 47.2,47.2 0 0,1 76.4,123.6
+          A 29.2,29.2 0 0,1 76.4,65.2
+          A 18,18 0 0,1 94.4,83.2
+          A 11.1,11.1 0 0,1 83.3,94.3
+          A 6.9,6.9 0 0,1 83.3,80.5
+          A 4.3,4.3 0 0,1 87.6,84.8
+        "
+            stroke="#c9a84c"
+            stroke-width="1.8"
+            opacity="0.8"
+          />
+          <circle
+            cx="100"
+            cy="100"
+            r="76"
+            stroke="#c9a84c"
+            stroke-width="0.8"
+            opacity="0.15"
+          />
+          <circle
+            cx="100"
+            cy="100"
+            r="47"
+            stroke="#c9a84c"
+            stroke-width="0.6"
+            opacity="0.12"
+          />
+          <circle
+            cx="100"
+            cy="100"
+            r="29"
+            stroke="#c9a84c"
+            stroke-width="0.5"
+            opacity="0.1"
+          />
+        </svg>
+
+        <p class="hero-label">Dr.C presents</p>
+
+        <h1>Fibonacci <em>FM</em> Explorer</h1>
+
+        <p class="hero-sub">
+          An interactive FM synthesizer where Fibonacci sequences and the golden
+          ratio shape every frequency, rhythm, and harmonic relationship.
+        </p>
+
+        <p class="hero-equation">
+          <span>F</span><sub><span>n</span></sub> = <span>F</span
+          ><sub><span>n</span>-1</sub> + <span>F</span
+          ><sub><span>n</span>-2</sub>
+          &ensp;&middot;&ensp;
+          <span>&phi;</span> = 1.618033&hellip;
+        </p>
+
+        <a href="Dr.C - Fibonacci FM Explorer.html" class="btn-launch"
+          >Launch Explorer</a
+        >
+
+        <div class="hero-links">
+          <a href="QUICK_START.md">Quick Start Guide</a>
+          <a href="TECHNICAL_MANUAL.md">Technical Manual</a>
+        </div>
+
+        <div class="phi-boxes">
+          <div class="phi-box"></div>
+          <div class="phi-box"></div>
+          <div class="phi-box"></div>
+          <div class="phi-box"></div>
+          <div class="phi-box"></div>
+        </div>
+      </section>
+
+      <!-- ── Fibonacci Sequence ── -->
+      <div class="fib-strip">
+        <span>1</span>
+        <span>1</span>
+        <span>2</span>
+        <span>3</span>
+        <span>5</span>
+        <span>8</span>
+        <span>13</span>
+        <span>21</span>
+        <span>34</span>
+        <span>55</span>
+        <span>89</span>
+        <span>144</span>
+        <span>233</span>
+      </div>
+
+      <!-- ── Features ── -->
+      <section class="features">
+        <p class="section-title">What&rsquo;s Inside</p>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <span class="feature-icon">&phi;</span>
+            <h3>FM Synthesis</h3>
+            <p>
+              Chowning-style frequency modulation driven by Fibonacci ratios.
+              Carrier-to-modulator relationships derived from the golden ratio
+              produce uniquely organic timbres.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-icon">&#x1D13B;</span>
+            <h3>Fibonacci Sequences</h3>
+            <p>
+              Melodic patterns, rhythmic divisions, and harmonic structures all
+              emerge from the Fibonacci series. Nature's own compositional
+              algorithm.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-icon">&#x266B;</span>
+            <h3>20+ Scale Systems</h3>
+            <p>
+              From Western modes to Raga and Gamelan, plus microtonal tunings.
+              Quantize Fibonacci-generated pitches to any tonal framework.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-icon">&#x25CE;</span>
+            <h3>Visual Generation</h3>
+            <p>
+              Watch Fibonacci spirals, golden rectangles, and waveforms animate
+              in real time. Every note paints the screen.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-icon">&#x25CC;</span>
+            <h3>Ghost Mode</h3>
+            <p>
+              Autonomous generative playback — the system composes and performs
+              on its own. Step back and listen to mathematical music unfold.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-icon">&#x2328;</span>
+            <h3>5-Octave Keyboard</h3>
+            <p>
+              Full on-screen keyboard with velocity sensitivity. Play
+              Fibonacci-tuned FM patches in real time from your browser.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-icon">&#x23CF;</span>
+            <h3>USB MIDI Support</h3>
+            <p>
+              Connect any class-compliant MIDI controller via WebMIDI. Hardware
+              knobs map directly to FM parameters.
+            </p>
+          </div>
+
+          <div class="feature-card">
+            <span class="feature-icon">&#x25D0;</span>
+            <h3>8 Themes &amp; Presets</h3>
+            <p>
+              Visual themes from golden warmth to deep space. A full preset
+              system lets you save and recall your discoveries.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <div class="divider">&middot; &middot; &middot;</div>
+
+      <!-- ── About ── -->
+      <section class="about">
+        <p class="section-title">About</p>
+
+        <p class="about-text">
+          The Fibonacci FM Explorer is a browser-based instrument built on
+          Csound 7 WebAudio. It translates the mathematics of the Fibonacci
+          sequence and golden ratio into sound through John Chowning's FM
+          synthesis — connecting number theory, nature, and music in a single
+          interactive experience.
+        </p>
+
+        <p class="about-text">
+          Designed as both a creative tool and a pedagogical instrument, it
+          invites musicians, students, and curious minds to hear what
+          mathematical beauty sounds like.
+        </p>
+
+        <div class="about-credit">
+          <strong>Dr. Richard Boulanger</strong>
+          <p class="about-affiliation">Berklee College of Music</p>
+        </div>
+      </section>
+
+      <div class="divider">&middot; &middot; &middot;</div>
+
+      <!-- ── Documentation ── -->
+      <section class="docs">
+        <p class="section-title">Documentation</p>
+
+        <div class="doc-links">
+          <a href="QUICK_START.md" class="doc-card">
+            <p class="doc-card-title">Quick Start Guide</p>
+            <p class="doc-card-desc">Get playing in under a minute</p>
+          </a>
+          <a href="TECHNICAL_MANUAL.md" class="doc-card">
+            <p class="doc-card-title">Technical Manual</p>
+            <p class="doc-card-desc">
+              Architecture, parameters &amp; API reference
+            </p>
+          </a>
+        </div>
+      </section>
+    </div>
+
+    <!-- ── Footer ── -->
+    <footer>
+      <p>
+        Dr.C &mdash; Fibonacci FM Explorer &ensp;&middot;&ensp;
+        <a href="Dr.C - Fibonacci FM Explorer.html">Launch</a>
+        &ensp;&middot;&ensp;
+        <a href="QUICK_START.md">Docs</a>
+      </p>
+      <p class="footer-csound">
+        Built with
+        <a href="https://csound.com" target="_blank" rel="noopener">Csound</a>
+        &ensp;&middot;&ensp; @csound/browser@7.0.0-beta26
+      </p>
+    </footer>
+  </body>
+</html>

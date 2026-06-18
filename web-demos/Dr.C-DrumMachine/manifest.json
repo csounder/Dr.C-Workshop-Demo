@@ -1,0 +1,28 @@
+{
+  "name": "DrC Drum Machine",
+  "short_name": "DrC",
+  "description": "Professional Csound-powered drum machine with 10 instruments, effects, and pattern sequencer",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#1a1a2e",
+  "theme_color": "#00d9ff",
+  "orientation": "landscape",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["music", "entertainment", "productivity"],
+  "shortcuts": [
+    {
+      "name": "New Pattern",
+      "short_name": "New",
+      "description": "Create a new pattern",
+      "url": "./index.html?action=new",
+      "icons": [{ "src": "icon.png", "sizes": "96x96" }]
+    }
+  ]
+}

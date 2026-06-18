@@ -1,0 +1,1565 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Simple FM Synth - Csound 7 WASM</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: linear-gradient(135deg, #1a1a2e, #16213e);
+        color: #e0e0e0;
+        padding: 15px;
+        min-height: 100vh;
+      }
+      .container {
+        max-width: 960px;
+        margin: 0 auto;
+      }
+      h1 {
+        text-align: center;
+        margin-bottom: 4px;
+        color: #ffd700;
+        font-size: 1.6em;
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+      }
+      .subtitle {
+        text-align: center;
+        margin-bottom: 14px;
+        color: #aaa;
+        font-size: 0.8em;
+      }
+      .btn-row {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+      .btn-row button {
+        flex: 1;
+      }
+      button {
+        background: linear-gradient(135deg, #ffd700, #ffed4e);
+        color: #1a1a2e;
+        border: none;
+        padding: 9px 16px;
+        border-radius: 7px;
+        font-size: 0.85em;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 2px 10px rgba(255, 215, 0, 0.25);
+      }
+      button:hover {
+        transform: translateY(-1px);
+      }
+      button:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+        transform: none;
+      }
+      button.stop-btn {
+        background: linear-gradient(135deg, #f87171, #fca5a5);
+        box-shadow: 0 2px 10px rgba(248, 113, 113, 0.25);
+      }
+      button.rand-btn {
+        background: linear-gradient(135deg, #a78bfa, #c4b5fd);
+        box-shadow: 0 2px 10px rgba(167, 139, 250, 0.25);
+      }
+      .panel {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 9px;
+        padding: 14px;
+        margin-bottom: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      .panel-title {
+        color: #ffd700;
+        font-weight: 600;
+        font-size: 0.8em;
+        margin-bottom: 10px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+      }
+      .ctrl {
+        margin-bottom: 10px;
+      }
+      .ctrl:last-child {
+        margin-bottom: 0;
+      }
+      .ctrl label {
+        display: block;
+        margin-bottom: 4px;
+        font-size: 0.78em;
+        color: #ccc;
+      }
+      .ctrl .row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .ctrl input[type="range"] {
+        flex: 1;
+        height: 4px;
+        border-radius: 2px;
+        background: rgba(255, 255, 255, 0.1);
+        outline: none;
+        -webkit-appearance: none;
+      }
+      .ctrl input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: #ffd700;
+        cursor: pointer;
+        box-shadow: 0 0 6px rgba(255, 215, 0, 0.4);
+      }
+      .ctrl .val {
+        min-width: 44px;
+        text-align: right;
+        font-weight: bold;
+        color: #fff;
+        font-size: 0.78em;
+      }
+      .two-col {
+        display: flex;
+        gap: 12px;
+      }
+      .two-col > * {
+        flex: 1;
+        min-width: 0;
+      }
+      .three-col {
+        display: flex;
+        gap: 12px;
+      }
+      .three-col > * {
+        flex: 1;
+        min-width: 0;
+      }
+      .preset-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .preset-bar select {
+        flex: 1;
+        min-width: 120px;
+        padding: 5px 8px;
+        border-radius: 6px;
+        background: rgba(0, 0, 0, 0.4);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        font-size: 0.8em;
+        outline: none;
+      }
+      .preset-bar select:focus {
+        border-color: #ffd700;
+      }
+      .preset-bar button {
+        padding: 5px 12px;
+        font-size: 0.75em;
+        width: auto;
+        min-width: 50px;
+      }
+      .preset-bar button.del-btn {
+        background: linear-gradient(135deg, #f87171, #fca5a5);
+      }
+      .num-input {
+        width: 72px;
+        padding: 4px 6px;
+        border-radius: 5px;
+        background: rgba(0, 0, 0, 0.4);
+        color: #fff;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        font-size: 0.82em;
+        text-align: center;
+        outline: none;
+        font-weight: bold;
+      }
+      .num-input:focus {
+        border-color: #ffd700;
+      }
+      .ratio-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .ratio-label {
+        color: #ccc;
+        font-size: 0.82em;
+        font-weight: bold;
+      }
+      .keys {
+        display: flex;
+        gap: 3px;
+      }
+      .key {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1.5px solid rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        padding: 5px 1px;
+        flex: 0 0 auto;
+        width: 46px;
+        text-align: center;
+        font-weight: bold;
+        transition: all 0.08s;
+        cursor: pointer;
+        user-select: none;
+      }
+      .key:hover {
+        background: rgba(255, 215, 0, 0.2);
+        border-color: #ffd700;
+      }
+      .key.active {
+        background: #ffd700;
+        color: #1a1a2e;
+        transform: scale(0.95);
+        box-shadow: 0 0 12px rgba(255, 215, 0, 0.5);
+      }
+      .key-label {
+        font-size: 0.78em;
+      }
+      .key-note {
+        font-size: 0.5em;
+        opacity: 0.6;
+        margin-top: 0;
+      }
+      .viz-row {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 12px;
+      }
+      .viz-row canvas {
+        flex: 1;
+        height: 120px;
+        background: rgba(0, 0, 0, 0.4);
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+      }
+      #log {
+        padding: 6px 8px;
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid #333;
+        border-radius: 7px;
+        max-height: 80px;
+        overflow-y: auto;
+        font-family: monospace;
+        font-size: 0.7em;
+        color: #4ade80;
+        margin-bottom: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Simple FM Synth</h1>
+      <div class="subtitle">
+        Csound 7 WASM &mdash; Richard Boulanger &amp; DrC
+      </div>
+
+      <!-- 1. Buttons -->
+      <div class="btn-row">
+        <button id="startBtn" onclick="startAudio()">Start Audio</button>
+        <button id="stopBtn" class="stop-btn" onclick="stopAudio()" disabled>
+          Stop Audio
+        </button>
+        <button class="rand-btn" onclick="randomize()">Randomize</button>
+      </div>
+
+      <!-- 2. Waveform + FFT -->
+      <div class="viz-row">
+        <canvas id="waveCanvas"></canvas><canvas id="fftCanvas"></canvas>
+      </div>
+
+      <!-- 3. Presets -->
+      <div class="panel">
+        <div class="panel-title">Presets</div>
+        <div class="preset-bar">
+          <select id="presetSelect" onchange="loadPreset()">
+            <option value="">-- select --</option>
+          </select>
+          <button onclick="savePreset()">Save</button>
+          <button class="del-btn" onclick="deletePreset()">Delete</button>
+        </div>
+      </div>
+
+      <!-- 4. Keyboard -->
+      <div class="panel">
+        <div class="panel-title">Keyboard</div>
+        <div class="keys" style="justify-content: center">
+          <div
+            class="key"
+            data-key="a"
+            data-freq="220"
+            onmousedown="clickKey(this)"
+            onmouseup="unclickKey(this)"
+            onmouseleave="unclickKey(this)"
+          >
+            <div class="key-label">A</div>
+            <div class="key-note">A3</div>
+          </div>
+          <div
+            class="key"
+            data-key="w"
+            data-freq="233.08"
+            onmousedown="clickKey(this)"
+            onmouseup="unclickKey(this)"
+            onmouseleave="unclickKey(this)"
+          >
+            <div class="key-label">W</div>
+            <div class="key-note">A#</div>
+          </div>
+          <div
+            class="key"
+            data-key="s"
+            data-freq="246.94"
+            onmousedown="clickKey(this)"
+            onmouseup="unclickKey(this)"
+            onmouseleave="unclickKey(this)"
+          >
+            <div class="key-label">S</div>
+            <div class="key-note">B3</div>
+          </div>
+          <div
+            class="key"
+            data-key="d"
+            data-freq="261.63"
+            onmousedown="clickKey(this)"
+            onmouseup="unclickKey(this)"
+            onmouseleave="unclickKey(this)"
+          >
+            <div class="key-label">D</div>
+            <div class="key-note">C4</div>
+          </div>
+          <div
+            class="key"
+            data-key="r"
+            data-freq="277.18"
+            onmousedown="clickKey(this)"
+            onmouseup="unclickKey(this)"
+            onmouseleave="unclickKey(this)"
+          >
+            <div class="key-label">R</div>
+            <div class="key-note">C#</div>
+          </div>
+          <div
+            class="key"
+            data-key="f"
+            data-freq="293.66"
+            onmousedown="clickKey(this)"
+            onmouseup="unclickKey(this)"
+            onmouseleave="unclickKey(this)"
+          >
+            <div class="key-label">F</div>
+            <div class="key-note">D4</div>
+          </div>
+          <div
+            class="key"
+            data-key="t"
+            data-freq="311.13"
+            onmousedown="clickKey(this)"
+            onmouseup="unclickKey(this)"
+            onmouseleave="unclickKey(this)"
+          >
+            <div class="key-label">T</div>
+            <div class="key-note">D#</div>
+          </div>
+          <div
+            class="key"
+            data-key="g"
+            data-freq="329.63"
+            onmousedown="clickKey(this)"
+            onmouseup="unclickKey(this)"
+            onmouseleave="unclickKey(this)"
+          >
+            <div class="key-label">G</div>
+            <div class="key-note">E4</div>
+          </div>
+          <div
+            class="key"
+            data-key="h"
+            data-freq="349.23"
+            onmousedown="clickKey(this)"
+            onmouseup="unclickKey(this)"
+            onmouseleave="unclickKey(this)"
+          >
+            <div class="key-label">H</div>
+            <div class="key-note">F4</div>
+          </div>
+          <div
+            class="key"
+            data-key="u"
+            data-freq="369.99"
+            onmousedown="clickKey(this)"
+            onmouseup="unclickKey(this)"
+            onmouseleave="unclickKey(this)"
+          >
+            <div class="key-label">U</div>
+            <div class="key-note">F#</div>
+          </div>
+          <div
+            class="key"
+            data-key="j"
+            data-freq="392"
+            onmousedown="clickKey(this)"
+            onmouseup="unclickKey(this)"
+            onmouseleave="unclickKey(this)"
+          >
+            <div class="key-label">J</div>
+            <div class="key-note">G4</div>
+          </div>
+          <div
+            class="key"
+            data-key="i"
+            data-freq="415.30"
+            onmousedown="clickKey(this)"
+            onmouseup="unclickKey(this)"
+            onmouseleave="unclickKey(this)"
+          >
+            <div class="key-label">I</div>
+            <div class="key-note">G#</div>
+          </div>
+          <div
+            class="key"
+            data-key="k"
+            data-freq="440"
+            onmousedown="clickKey(this)"
+            onmouseup="unclickKey(this)"
+            onmouseleave="unclickKey(this)"
+          >
+            <div class="key-label">K</div>
+            <div class="key-note">A4</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. Output -->
+      <div class="panel">
+        <div class="panel-title">Output</div>
+        <div class="two-col">
+          <div class="ctrl">
+            <label>Volume</label>
+            <div class="row">
+              <input
+                type="range"
+                id="volume"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.5"
+                oninput="document.getElementById('volVal').textContent=Math.round(this.value*100)+'%';updateFx()"
+              />
+              <span class="val" id="volVal">50%</span>
+            </div>
+          </div>
+          <div class="ctrl">
+            <label>Note Duration</label>
+            <div class="row">
+              <input
+                type="range"
+                id="duration"
+                min="0.1"
+                max="4"
+                step="0.1"
+                value="0.5"
+                oninput="document.getElementById('durVal').textContent=parseFloat(this.value).toFixed(1)+'s'"
+              />
+              <span class="val" id="durVal">0.5s</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 6. Reverb -->
+      <div class="panel">
+        <div class="panel-title">Reverb</div>
+        <div class="two-col">
+          <div class="ctrl">
+            <label>Send</label>
+            <div class="row">
+              <input
+                type="range"
+                id="revsend"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.3"
+                oninput="document.getElementById('rvVal').textContent=Math.round(this.value*100)+'%'"
+              />
+              <span class="val" id="rvVal">30%</span>
+            </div>
+          </div>
+          <div class="ctrl">
+            <label>Time</label>
+            <div class="row">
+              <input
+                type="range"
+                id="revtime"
+                min="0.1"
+                max="0.99"
+                step="0.01"
+                value="0.88"
+                oninput="document.getElementById('rtVal').textContent=parseFloat(this.value).toFixed(2);updateFx()"
+              />
+              <span class="val" id="rtVal">0.88</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 7. Delay -->
+      <div class="panel">
+        <div class="panel-title">Multitap Delay</div>
+        <div class="two-col">
+          <div class="ctrl">
+            <label>Time</label>
+            <div class="row">
+              <input
+                type="range"
+                id="deltime"
+                min="0.05"
+                max="1"
+                step="0.01"
+                value="0.3"
+                oninput="document.getElementById('dtVal').textContent=parseFloat(this.value).toFixed(2)+'s';updateFx()"
+              />
+              <span class="val" id="dtVal">0.30s</span>
+            </div>
+          </div>
+          <div class="ctrl">
+            <label>Mix</label>
+            <div class="row">
+              <input
+                type="range"
+                id="delmix"
+                min="0"
+                max="0.8"
+                step="0.01"
+                value="0"
+                oninput="document.getElementById('dmVal').textContent=Math.round(this.value*100)+'%';updateFx()"
+              />
+              <span class="val" id="dmVal">0%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 8. Chorus & Stereo -->
+      <div class="panel">
+        <div class="panel-title">Chorus &amp; Stereo</div>
+        <div class="three-col">
+          <div class="ctrl">
+            <label>Depth</label>
+            <div class="row">
+              <input
+                type="range"
+                id="chrdepth"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0"
+                oninput="document.getElementById('cdVal').textContent=parseFloat(this.value).toFixed(2);updateFx()"
+              />
+              <span class="val" id="cdVal">0.00</span>
+            </div>
+          </div>
+          <div class="ctrl">
+            <label>Rate</label>
+            <div class="row">
+              <input
+                type="range"
+                id="chrrate"
+                min="0.1"
+                max="6"
+                step="0.1"
+                value="1.5"
+                oninput="document.getElementById('crVal').textContent=parseFloat(this.value).toFixed(1)+'Hz';updateFx()"
+              />
+              <span class="val" id="crVal">1.5Hz</span>
+            </div>
+          </div>
+          <div class="ctrl">
+            <label>Stereo Width</label>
+            <div class="row">
+              <input
+                type="range"
+                id="width"
+                min="0"
+                max="1"
+                step="0.01"
+                value="0.5"
+                oninput="document.getElementById('swVal').textContent=Math.round(this.value*100)+'%';updateFx()"
+              />
+              <span class="val" id="swVal">50%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 9. C:M + Index -->
+      <div class="panel">
+        <div class="panel-title">FM Synthesis</div>
+        <div class="two-col">
+          <div class="ctrl">
+            <label>C:M Ratio</label>
+            <div class="ratio-row">
+              <span class="ratio-label">C</span>
+              <input
+                type="number"
+                id="cfreqmul"
+                class="num-input"
+                value="1"
+                min="0.001"
+                step="0.001"
+              />
+              <span class="ratio-label">:</span>
+              <span class="ratio-label">M</span>
+              <input
+                type="number"
+                id="mfreqmul"
+                class="num-input"
+                value="2"
+                min="0.001"
+                step="0.001"
+              />
+            </div>
+          </div>
+          <div class="ctrl">
+            <label>Mod Index</label>
+            <div class="row">
+              <input
+                type="range"
+                id="modindex"
+                min="0"
+                max="20"
+                step="0.1"
+                value="3"
+                oninput="document.getElementById('miVal').textContent=parseFloat(this.value).toFixed(1)"
+              />
+              <span class="val" id="miVal">3.0</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 10. Carrier ADSR -->
+      <div class="panel">
+        <div class="panel-title">Carrier Envelope</div>
+        <div class="two-col">
+          <div>
+            <div class="ctrl">
+              <label>Attack</label>
+              <div class="row">
+                <input
+                  type="range"
+                  id="cAtk"
+                  min="0.001"
+                  max="4"
+                  step="0.001"
+                  value="0.01"
+                  oninput="document.getElementById('cAVal').textContent=parseFloat(this.value).toFixed(3)+'s'"
+                /><span class="val" id="cAVal">0.010s</span>
+              </div>
+            </div>
+            <div class="ctrl">
+              <label>Decay</label>
+              <div class="row">
+                <input
+                  type="range"
+                  id="cDec"
+                  min="0.01"
+                  max="4"
+                  step="0.01"
+                  value="0.3"
+                  oninput="document.getElementById('cDVal').textContent=parseFloat(this.value).toFixed(2)+'s'"
+                /><span class="val" id="cDVal">0.30s</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="ctrl">
+              <label>Sustain</label>
+              <div class="row">
+                <input
+                  type="range"
+                  id="cSus"
+                  min="0.01"
+                  max="1"
+                  step="0.01"
+                  value="0.5"
+                  oninput="document.getElementById('cSVal').textContent=parseFloat(this.value).toFixed(2)"
+                /><span class="val" id="cSVal">0.50</span>
+              </div>
+            </div>
+            <div class="ctrl">
+              <label>Release</label>
+              <div class="row">
+                <input
+                  type="range"
+                  id="cRel"
+                  min="0.01"
+                  max="8"
+                  step="0.01"
+                  value="1.5"
+                  oninput="document.getElementById('cRVal').textContent=parseFloat(this.value).toFixed(2)+'s'"
+                /><span class="val" id="cRVal">1.50s</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 11. Modulator ADSR -->
+      <div class="panel">
+        <div class="panel-title">Modulator Envelope</div>
+        <div class="two-col">
+          <div>
+            <div class="ctrl">
+              <label>Attack</label>
+              <div class="row">
+                <input
+                  type="range"
+                  id="mAtk"
+                  min="0.001"
+                  max="4"
+                  step="0.001"
+                  value="0.01"
+                  oninput="document.getElementById('mAVal').textContent=parseFloat(this.value).toFixed(3)+'s'"
+                /><span class="val" id="mAVal">0.010s</span>
+              </div>
+            </div>
+            <div class="ctrl">
+              <label>Decay</label>
+              <div class="row">
+                <input
+                  type="range"
+                  id="mDec"
+                  min="0.01"
+                  max="4"
+                  step="0.01"
+                  value="0.2"
+                  oninput="document.getElementById('mDVal').textContent=parseFloat(this.value).toFixed(2)+'s'"
+                /><span class="val" id="mDVal">0.20s</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="ctrl">
+              <label>Sustain</label>
+              <div class="row">
+                <input
+                  type="range"
+                  id="mSus"
+                  min="0.01"
+                  max="1"
+                  step="0.01"
+                  value="0.8"
+                  oninput="document.getElementById('mSVal').textContent=parseFloat(this.value).toFixed(2)"
+                /><span class="val" id="mSVal">0.80</span>
+              </div>
+            </div>
+            <div class="ctrl">
+              <label>Release</label>
+              <div class="row">
+                <input
+                  type="range"
+                  id="mRel"
+                  min="0.01"
+                  max="8"
+                  step="0.01"
+                  value="1"
+                  oninput="document.getElementById('mRVal').textContent=parseFloat(this.value).toFixed(2)+'s'"
+                /><span class="val" id="mRVal">1.00s</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 12. Console -->
+      <div id="log"></div>
+    </div>
+
+    <script>
+      var csound = null,
+        CsoundFactory = null,
+        audioStarted = false,
+        activeKeys = {};
+      var analyser = null,
+        animFrame = null;
+      var PRESETS_KEY = "simpleFmSynth2op_v9";
+      var PARAM_IDS = [
+        "volume",
+        "duration",
+        "cAtk",
+        "cDec",
+        "cSus",
+        "cRel",
+        "mAtk",
+        "mDec",
+        "mSus",
+        "mRel",
+        "cfreqmul",
+        "mfreqmul",
+        "modindex",
+        "revsend",
+        "revtime",
+        "deltime",
+        "delmix",
+        "chrdepth",
+        "chrrate",
+        "width",
+      ];
+
+      function log(m) {
+        var d = document.getElementById("log");
+        d.innerHTML +=
+          "[" + new Date().toLocaleTimeString() + "] " + m + "<br>";
+        d.scrollTop = d.scrollHeight;
+        console.log(m);
+      }
+      function clickKey(el) {
+        el.classList.add("active");
+        playNote(parseFloat(el.dataset.freq));
+      }
+      function unclickKey(el) {
+        el.classList.remove("active");
+      }
+
+      // Presets
+      function getPresets() {
+        try {
+          return JSON.parse(localStorage.getItem(PRESETS_KEY)) || {};
+        } catch (e) {
+          return {};
+        }
+      }
+      function savePresetsToStorage(p) {
+        localStorage.setItem(PRESETS_KEY, JSON.stringify(p));
+      }
+      function refreshPresetList(sel) {
+        var s = document.getElementById("presetSelect"),
+          p = getPresets(),
+          n = Object.keys(p).sort();
+        s.innerHTML = '<option value="">-- select --</option>';
+        for (var i = 0; i < n.length; i++) {
+          var o = document.createElement("option");
+          o.value = n[i];
+          o.textContent = n[i];
+          if (n[i] === sel) o.selected = true;
+          s.appendChild(o);
+        }
+      }
+      function getCurrentSettings() {
+        var s = {};
+        for (var i = 0; i < PARAM_IDS.length; i++)
+          s[PARAM_IDS[i]] = document.getElementById(PARAM_IDS[i]).value;
+        return s;
+      }
+      function applySettings(s) {
+        for (var i = 0; i < PARAM_IDS.length; i++) {
+          var el = document.getElementById(PARAM_IDS[i]);
+          if (s[PARAM_IDS[i]] !== undefined) {
+            el.value = s[PARAM_IDS[i]];
+            el.dispatchEvent(new Event("input"));
+          }
+        }
+      }
+      function savePreset() {
+        var n = prompt("Preset name:");
+        if (!n || !n.trim()) return;
+        n = n.trim();
+        var p = getPresets();
+        p[n] = getCurrentSettings();
+        savePresetsToStorage(p);
+        refreshPresetList(n);
+        log("Saved: " + n);
+      }
+      function loadPreset() {
+        var n = document.getElementById("presetSelect").value;
+        if (!n) return;
+        var p = getPresets();
+        if (p[n]) {
+          applySettings(p[n]);
+          updateFx();
+          log("Loaded: " + n);
+        }
+      }
+      function deletePreset() {
+        var n = document.getElementById("presetSelect").value;
+        if (!n) {
+          alert("Select a preset first.");
+          return;
+        }
+        if (!confirm('Delete "' + n + '"?')) return;
+        var p = getPresets();
+        delete p[n];
+        savePresetsToStorage(p);
+        refreshPresetList("");
+        log("Deleted: " + n);
+      }
+
+      function randomize() {
+        document.getElementById("duration").value = (
+          Math.random() * 3.5 +
+          0.1
+        ).toFixed(1);
+        document.getElementById("cAtk").value = (Math.random() * 2).toFixed(3);
+        document.getElementById("cDec").value = (
+          Math.random() * 2 +
+          0.01
+        ).toFixed(2);
+        document.getElementById("cSus").value = (
+          Math.random() * 0.9 +
+          0.05
+        ).toFixed(2);
+        document.getElementById("cRel").value = (
+          Math.random() * 5 +
+          0.1
+        ).toFixed(2);
+        document.getElementById("mAtk").value = (Math.random() * 1.5).toFixed(
+          3,
+        );
+        document.getElementById("mDec").value = (
+          Math.random() * 2 +
+          0.01
+        ).toFixed(2);
+        document.getElementById("mSus").value = (
+          Math.random() * 0.9 +
+          0.05
+        ).toFixed(2);
+        document.getElementById("mRel").value = (
+          Math.random() * 4 +
+          0.1
+        ).toFixed(2);
+        var cv = [1, 1, 1, 2, 3, 0.5],
+          mv = [1, 2, 3, 5, 7, 1.414, 3.5, 4, 8, 0.5];
+        document.getElementById("cfreqmul").value =
+          cv[Math.floor(Math.random() * cv.length)];
+        document.getElementById("mfreqmul").value =
+          mv[Math.floor(Math.random() * mv.length)];
+        document.getElementById("modindex").value = (
+          Math.random() * 15
+        ).toFixed(1);
+        document.getElementById("revsend").value = (
+          Math.random() * 0.8
+        ).toFixed(2);
+        document.getElementById("revtime").value = (
+          Math.random() * 0.7 +
+          0.2
+        ).toFixed(2);
+        document.getElementById("deltime").value = (
+          Math.random() * 0.8 +
+          0.05
+        ).toFixed(2);
+        document.getElementById("delmix").value = (Math.random() * 0.5).toFixed(
+          2,
+        );
+        document.getElementById("chrdepth").value = (
+          Math.random() * 0.7
+        ).toFixed(2);
+        document.getElementById("chrrate").value = (
+          Math.random() * 4 +
+          0.5
+        ).toFixed(1);
+        document.getElementById("width").value = (
+          Math.random() * 0.8 +
+          0.1
+        ).toFixed(2);
+        for (var i = 0; i < PARAM_IDS.length; i++)
+          document
+            .getElementById(PARAM_IDS[i])
+            .dispatchEvent(new Event("input"));
+        updateFx();
+        log("Randomized!");
+      }
+
+      function initFactoryPresets() {
+        var p = getPresets(),
+          f = {
+            "Clean Sine": {
+              volume: ".5",
+              duration: ".5",
+              cAtk: ".001",
+              cDec: ".2",
+              cSus: ".3",
+              cRel: ".8",
+              mAtk: ".001",
+              mDec: ".15",
+              mSus: ".1",
+              mRel: ".5",
+              cfreqmul: "1",
+              mfreqmul: "1",
+              modindex: "2",
+              revsend: ".2",
+              revtime: ".8",
+              deltime: ".3",
+              delmix: "0",
+              chrdepth: "0",
+              chrrate: "1.5",
+              width: ".5",
+            },
+            "Electric Piano": {
+              volume: ".5",
+              duration: "1",
+              cAtk: ".01",
+              cDec: ".8",
+              cSus: ".3",
+              cRel: ".8",
+              mAtk: ".01",
+              mDec: ".5",
+              mSus: ".2",
+              mRel: ".6",
+              cfreqmul: "1",
+              mfreqmul: "2",
+              modindex: "3",
+              revsend: ".25",
+              revtime: ".85",
+              deltime: ".25",
+              delmix: ".15",
+              chrdepth: ".2",
+              chrrate: "1.2",
+              width: ".6",
+            },
+            "Crystal Bell": {
+              volume: ".45",
+              duration: "2",
+              cAtk: ".001",
+              cDec: ".1",
+              cSus: ".05",
+              cRel: "3",
+              mAtk: ".001",
+              mDec: "2",
+              mSus: ".01",
+              mRel: "3",
+              cfreqmul: "1",
+              mfreqmul: "3.501",
+              modindex: "4.5",
+              revsend: ".5",
+              revtime: ".92",
+              deltime: ".4",
+              delmix: ".2",
+              chrdepth: "0",
+              chrrate: "1.5",
+              width: ".4",
+            },
+            "Bright Pluck": {
+              volume: ".5",
+              duration: ".5",
+              cAtk: ".001",
+              cDec: ".15",
+              cSus: ".05",
+              cRel: ".5",
+              mAtk: ".001",
+              mDec: ".1",
+              mSus: ".01",
+              mRel: ".3",
+              cfreqmul: "1",
+              mfreqmul: "4",
+              modindex: "5",
+              revsend: ".3",
+              revtime: ".82",
+              deltime: ".15",
+              delmix: ".1",
+              chrdepth: ".3",
+              chrrate: "2",
+              width: ".7",
+            },
+            "Muted Brass": {
+              volume: ".5",
+              duration: "1.5",
+              cAtk: ".08",
+              cDec: ".3",
+              cSus: ".6",
+              cRel: ".3",
+              mAtk: ".05",
+              mDec: ".2",
+              mSus: ".7",
+              mRel: ".2",
+              cfreqmul: "1",
+              mfreqmul: "1.414",
+              modindex: "6",
+              revsend: ".15",
+              revtime: ".75",
+              deltime: ".1",
+              delmix: "0",
+              chrdepth: ".5",
+              chrrate: "1.8",
+              width: ".8",
+            },
+            "Warm Pad": {
+              volume: ".5",
+              duration: "2",
+              cAtk: ".5",
+              cDec: ".5",
+              cSus: ".7",
+              cRel: "2",
+              mAtk: ".3",
+              mDec: ".4",
+              mSus: ".8",
+              mRel: "2",
+              cfreqmul: "1",
+              mfreqmul: "5.19",
+              modindex: "1.5",
+              revsend: ".4",
+              revtime: ".88",
+              deltime: ".5",
+              delmix: ".25",
+              chrdepth: ".4",
+              chrrate: ".8",
+              width: ".6",
+            },
+            "Metallic Gong": {
+              volume: ".4",
+              duration: "1.5",
+              cAtk: ".001",
+              cDec: ".2",
+              cSus: ".1",
+              cRel: "4",
+              mAtk: ".001",
+              mDec: "1.5",
+              mSus: ".05",
+              mRel: "3",
+              cfreqmul: "1",
+              mfreqmul: "7.01",
+              modindex: "8",
+              revsend: ".45",
+              revtime: ".9",
+              deltime: ".35",
+              delmix: ".3",
+              chrdepth: ".1",
+              chrrate: "3",
+              width: ".5",
+            },
+            "Wide Organ": {
+              volume: ".5",
+              duration: "1",
+              cAtk: ".01",
+              cDec: ".1",
+              cSus: ".9",
+              cRel: ".1",
+              mAtk: ".01",
+              mDec: ".1",
+              mSus: ".9",
+              mRel: ".1",
+              cfreqmul: "2",
+              mfreqmul: "3",
+              modindex: "2",
+              revsend: ".2",
+              revtime: ".8",
+              deltime: ".2",
+              delmix: "0",
+              chrdepth: ".6",
+              chrrate: "1",
+              width: ".9",
+            },
+            "Sub Drone": {
+              volume: ".45",
+              duration: "2",
+              cAtk: ".05",
+              cDec: ".5",
+              cSus: ".8",
+              cRel: "1",
+              mAtk: ".05",
+              mDec: ".3",
+              mSus: ".9",
+              mRel: ".8",
+              cfreqmul: ".5",
+              mfreqmul: "2.718",
+              modindex: ".8",
+              revsend: ".1",
+              revtime: ".7",
+              deltime: ".6",
+              delmix: ".35",
+              chrdepth: ".2",
+              chrrate: "2.5",
+              width: ".3",
+            },
+            "Alien Voice": {
+              volume: ".4",
+              duration: "1",
+              cAtk: ".001",
+              cDec: ".3",
+              cSus: ".15",
+              cRel: "2",
+              mAtk: ".001",
+              mDec: ".8",
+              mSus: ".3",
+              mRel: "1.5",
+              cfreqmul: "1",
+              mfreqmul: "9.37",
+              modindex: "3.5",
+              revsend: ".35",
+              revtime: ".86",
+              deltime: ".45",
+              delmix: ".2",
+              chrdepth: "0",
+              chrrate: "1.5",
+              width: ".5",
+            },
+          };
+        for (var k in f) {
+          if (!p[k]) p[k] = f[k];
+        }
+        savePresetsToStorage(p);
+        refreshPresetList("");
+      }
+
+      // Visualizers
+      function startVisualizerLoop() {
+        if (!analyser) return;
+        var wC = document.getElementById("waveCanvas"),
+          fC = document.getElementById("fftCanvas");
+        var wX = wC.getContext("2d"),
+          fX = fC.getContext("2d");
+        var bLen = analyser.frequencyBinCount,
+          tD = new Uint8Array(bLen),
+          fD = new Uint8Array(bLen);
+        function draw() {
+          animFrame = requestAnimationFrame(draw);
+          var dpr = window.devicePixelRatio || 1;
+          if (wC.width !== wC.clientWidth * dpr) {
+            wC.width = wC.clientWidth * dpr;
+            wC.height = wC.clientHeight * dpr;
+            fC.width = fC.clientWidth * dpr;
+            fC.height = fC.clientHeight * dpr;
+          }
+          var w = wC.width,
+            h = wC.height,
+            fw = fC.width,
+            fh = fC.height;
+          analyser.getByteTimeDomainData(tD);
+          analyser.getByteFrequencyData(fD);
+          wX.fillStyle = "rgba(0,0,0,.3)";
+          wX.fillRect(0, 0, w, h);
+          wX.lineWidth = 2 * dpr;
+          wX.strokeStyle = "#ffd700";
+          wX.beginPath();
+          var sl = w / bLen;
+          for (var i = 0; i < bLen; i++) {
+            var v = tD[i] / 128,
+              y = (v * h) / 2;
+            if (i === 0) wX.moveTo(0, y);
+            else wX.lineTo(i * sl, y);
+          }
+          wX.stroke();
+          wX.fillStyle = "rgba(255,215,0,.4)";
+          wX.font = 10 * dpr + "px sans-serif";
+          wX.fillText("WAVEFORM", 6 * dpr, 14 * dpr);
+          fX.fillStyle = "rgba(0,0,0,.3)";
+          fX.fillRect(0, 0, fw, fh);
+          var bars = Math.floor(bLen * 0.4),
+            bW = fw / bars;
+          for (var i = 0; i < bars; i++) {
+            var val = fD[i] / 255,
+              bH = val * fh;
+            fX.fillStyle =
+              "hsla(" +
+              (45 + val * 20) +
+              ",100%," +
+              (40 + val * 30) +
+              "%," +
+              (0.6 + val * 0.4) +
+              ")";
+            fX.fillRect(i * bW, fh - bH, bW > 2 ? bW - 1 : bW, bH);
+          }
+          fX.fillStyle = "rgba(255,215,0,.4)";
+          fX.font = 10 * dpr + "px sans-serif";
+          fX.fillText("FFT SPECTRUM", 6 * dpr, 14 * dpr);
+        }
+        draw();
+      }
+      function stopVisualizer() {
+        if (animFrame) {
+          cancelAnimationFrame(animFrame);
+          animFrame = null;
+        }
+      }
+
+      // Orchestra
+      var ORC =
+        "\
+sr = 44100\n\
+ksmps = 32\n\
+nchnls = 2\n\
+0dbfs = 1\n\
+\n\
+gaDryL  init 0\n\
+gaDryR  init 0\n\
+gaRvbL  init 0\n\
+gaRvbR  init 0\n\
+gaDelL  init 0\n\
+gaDelR  init 0\n\
+gkVol   init 0.5\n\
+gkRvbTime  init 0.88\n\
+gkDelTime  init 0.3\n\
+gkDelMix   init 0.0\n\
+gkChrDepth init 0.0\n\
+gkChrRate  init 1.5\n\
+gkWidth    init 0.5\n\
+\n\
+maxalloc 1, 8\n\
+\n\
+instr 1\n\
+  iFreq=p4\n\
+  iVol=p5 / 8\n\
+  iCAtk=p6\n\
+  iCDec=p7\n\
+  iCSus=p8\n\
+  iCRel=p9\n\
+  iMAtk=p10\n\
+  iMDec=p11\n\
+  iMSus=p12\n\
+  iMRel=p13\n\
+  iCMul=p14\n\
+  iMMul=p15\n\
+  iIndex=p16\n\
+  iRvSnd=p17\n\
+  kCEnv madsr iCAtk,iCDec,iCSus,iCRel\n\
+  kMEnv madsr iMAtk,iMDec,iMSus,iMRel\n\
+  iModFreq=iFreq*iMMul\n\
+  iModAmp=iModFreq*iIndex\n\
+  aMod oscili kMEnv*iModAmp,iModFreq\n\
+  iCarFreq=iFreq*iCMul\n\
+  aCar oscili kCEnv*iVol,iCarFreq+aMod\n\
+  gaDryL=gaDryL+aCar\n\
+  gaDryR=gaDryR+aCar\n\
+  gaRvbL=gaRvbL+aCar*iRvSnd\n\
+  gaRvbR=gaRvbR+aCar*iRvSnd\n\
+  gaDelL=gaDelL+aCar\n\
+  gaDelR=gaDelR+aCar\n\
+endin\n\
+\n\
+instr 97\n\
+  iDt=i(gkDelTime)\n\
+  kMix=gkDelMix\n\
+  aDelL multitap gaDelL,iDt,0.95,iDt*3,0.70,iDt*5,0.43,iDt*7,0.15\n\
+  aDelR multitap gaDelR,iDt*2,0.83,iDt*4,0.57,iDt*6,0.31,iDt*8,0.05\n\
+  gaDryL=gaDryL+aDelL*kMix\n\
+  gaDryR=gaDryR+aDelR*kMix\n\
+  clear gaDelL,gaDelR\n\
+endin\n\
+\n\
+instr 98\n\
+  kDepth=gkChrDepth*0.004\n\
+  kRate=gkChrRate\n\
+  aLfoL oscili kDepth,kRate\n\
+  aLfoR oscili kDepth,kRate*1.07,-1,0.25\n\
+  aChL vdelay gaDryL,(aLfoL+0.005)*1000,20\n\
+  aChR vdelay gaDryR,(aLfoR+0.005)*1000,20\n\
+  gaDryL=gaDryL+aChL*gkChrDepth*0.4\n\
+  gaDryR=gaDryR+aChR*gkChrDepth*0.4\n\
+endin\n\
+\n\
+instr 99\n\
+  aRvbL,aRvbR reverbsc gaRvbL,gaRvbR,gkRvbTime,10000\n\
+  gaDryL=gaDryL+aRvbL*0.25\n\
+  gaDryR=gaDryR+aRvbR*0.25\n\
+  clear gaRvbL,gaRvbR\n\
+endin\n\
+\n\
+instr 200\n\
+  kW=gkWidth\n\
+  aMid=(gaDryL+gaDryR)*0.5\n\
+  aSide=(gaDryL-gaDryR)*0.5\n\
+  aL=aMid+aSide*kW\n\
+  aR=aMid-aSide*kW\n\
+  aL=aL*gkVol\n\
+  aR=aR*gkVol\n\
+  aL limit aL,-0.95,0.95\n\
+  aR limit aR,-0.95,0.95\n\
+  outs aL,aR\n\
+  clear gaDryL,gaDryR\n\
+endin\n\
+\n\
+instr 100\n\
+  gkRvbTime=p4\n\
+  gkDelTime=p5\n\
+  gkDelMix=p6\n\
+  gkChrDepth=p7\n\
+  gkChrRate=p8\n\
+  gkWidth=p9\n\
+  gkVol=p10\n\
+  turnoff\n\
+endin\n\
+";
+
+      function updateFx() {
+        if (!audioStarted || !csound) return;
+        csound.inputMessage(
+          "i 100 0 0.01 " +
+            document.getElementById("revtime").value +
+            " " +
+            document.getElementById("deltime").value +
+            " " +
+            document.getElementById("delmix").value +
+            " " +
+            document.getElementById("chrdepth").value +
+            " " +
+            document.getElementById("chrrate").value +
+            " " +
+            document.getElementById("width").value +
+            " " +
+            document.getElementById("volume").value,
+        );
+      }
+
+      async function startAudio() {
+        if (audioStarted) return;
+        try {
+          log("=== SIMPLE FM SYNTH ===");
+          if (!CsoundFactory) {
+            log("Loading @csound/browser@7.0.0-beta26...");
+            var mod = await import(
+              "https://cdn.jsdelivr.net/npm/@csound/browser@7.0.0-beta26/dist/csound.js"
+            );
+            CsoundFactory = mod.Csound;
+            log("Module loaded");
+          }
+          log("Creating Csound instance...");
+          csound = await CsoundFactory({
+            useWorker: false,
+            useSPN: false,
+            outputChannelCount: 2,
+          });
+          log("Instance created");
+          await csound.setOption("-odac");
+          await csound.setOption("-m0");
+          log("Compiling...");
+          await csound.compileOrc(ORC);
+          log("Compiled");
+          log("Starting...");
+          await csound.start();
+          log("Started");
+          await csound.inputMessage("i 97 0 -1");
+          await csound.inputMessage("i 98 0 -1");
+          await csound.inputMessage("i 99 0 -1");
+          await csound.inputMessage("i 200 0 -1");
+          log("FX chain running");
+          updateFx();
+          try {
+            var ctx = await csound.getAudioContext();
+            if (ctx) {
+              analyser = ctx.createAnalyser();
+              analyser.fftSize = 2048;
+              analyser.smoothingTimeConstant = 0.8;
+              var node = await csound.getNode();
+              if (node) {
+                node.connect(analyser);
+                analyser.connect(ctx.destination);
+                startVisualizerLoop();
+                log("Visualizers active");
+              }
+            }
+          } catch (ve) {
+            log("Viz: " + ve.message);
+          }
+          audioStarted = true;
+          document.getElementById("startBtn").textContent = "Audio Running";
+          document.getElementById("startBtn").disabled = true;
+          document.getElementById("stopBtn").disabled = false;
+          log("=== READY ===");
+        } catch (err) {
+          log("ERROR: " + err.message);
+          log("Stack: " + err.stack);
+        }
+      }
+
+      async function stopAudio() {
+        if (!audioStarted || !csound) return;
+        try {
+          stopVisualizer();
+          await csound.stop();
+          if (typeof csound.destroy === "function") await csound.destroy();
+          else if (typeof csound.reset === "function") await csound.reset();
+        } catch (e) {
+          log("Stop: " + e.message);
+        }
+        csound = null;
+        analyser = null;
+        audioStarted = false;
+        document.getElementById("startBtn").textContent = "Start Audio";
+        document.getElementById("startBtn").disabled = false;
+        document.getElementById("stopBtn").disabled = true;
+        log("Audio stopped");
+      }
+
+      function playNote(freq) {
+        if (!audioStarted || !csound) return;
+        var dur = parseFloat(document.getElementById("duration").value);
+        var vol = parseFloat(document.getElementById("volume").value);
+        var cA = parseFloat(document.getElementById("cAtk").value);
+        var cD = parseFloat(document.getElementById("cDec").value);
+        var cS = parseFloat(document.getElementById("cSus").value);
+        var cR = parseFloat(document.getElementById("cRel").value);
+        var mA = parseFloat(document.getElementById("mAtk").value);
+        var mD = parseFloat(document.getElementById("mDec").value);
+        var mS = parseFloat(document.getElementById("mSus").value);
+        var mR = parseFloat(document.getElementById("mRel").value);
+        var cm = parseFloat(document.getElementById("cfreqmul").value) || 1;
+        var mm = parseFloat(document.getElementById("mfreqmul").value) || 2;
+        var idx = parseFloat(document.getElementById("modindex").value);
+        var rv = parseFloat(document.getElementById("revsend").value);
+        csound.inputMessage(
+          "i 1 0 " +
+            dur +
+            " " +
+            freq +
+            " " +
+            vol +
+            " " +
+            cA +
+            " " +
+            cD +
+            " " +
+            cS +
+            " " +
+            cR +
+            " " +
+            mA +
+            " " +
+            mD +
+            " " +
+            mS +
+            " " +
+            mR +
+            " " +
+            cm +
+            " " +
+            mm +
+            " " +
+            idx +
+            " " +
+            rv,
+        );
+      }
+
+      document.addEventListener("keydown", function (e) {
+        var key = e.key.toLowerCase();
+        if (activeKeys[key]) return;
+        if (document.activeElement && document.activeElement.type === "number")
+          return;
+        var el = document.querySelector('[data-key="' + key + '"]');
+        if (el) {
+          e.preventDefault();
+          activeKeys[key] = true;
+          el.classList.add("active");
+          playNote(parseFloat(el.dataset.freq));
+        }
+      });
+      document.addEventListener("keyup", function (e) {
+        var key = e.key.toLowerCase();
+        delete activeKeys[key];
+        var el = document.querySelector('[data-key="' + key + '"]');
+        if (el) el.classList.remove("active");
+      });
+
+      initFactoryPresets();
+    </script>
+  </body>
+</html>

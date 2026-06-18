@@ -1,0 +1,2120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FM·SYNTH — Csound7 WASM</title>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "@csound/browser": "https://esm.sh/@csound/browser"
+        }
+      }
+    </script>
+
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap");
+
+      :root {
+        --bg: #080810;
+        --panel: #0d0d18;
+        --panel2: #11111e;
+        --border: #1c1c30;
+        --accent: #00ffd5;
+        --accent2: #ff2fff;
+        --accent3: #ffe600;
+        --dim: #252540;
+        --text: #c0c8e0;
+        --text-dim: #404060;
+        --glow: 0 0 14px rgba(0, 255, 213, 0.45);
+        --glow2: 0 0 14px rgba(255, 47, 255, 0.45);
+        --glow3: 0 0 14px rgba(255, 230, 0, 0.45);
+      }
+
+      /* Amber Theme */
+      body[data-theme="amber"] {
+        --bg: #1a0f00;
+        --panel: #271600;
+        --panel2: #331d00;
+        --border: #4d2e00;
+        --accent: #ffa500;
+        --accent2: #ff6b00;
+        --accent3: #ffd700;
+        --dim: #3d2400;
+        --text: #ffe4b5;
+        --text-dim: #8b6914;
+        --glow: 0 0 14px rgba(255, 165, 0, 0.45);
+        --glow2: 0 0 14px rgba(255, 107, 0, 0.45);
+        --glow3: 0 0 14px rgba(255, 215, 0, 0.45);
+      }
+
+      /* Emerald Theme */
+      body[data-theme="emerald"] {
+        --bg: #001a0f;
+        --panel: #002716;
+        --panel2: #003320;
+        --border: #004d30;
+        --accent: #00ff88;
+        --accent2: #00cc6b;
+        --accent3: #7fff00;
+        --dim: #003d24;
+        --text: #b5ffe4;
+        --text-dim: #148b5a;
+        --glow: 0 0 14px rgba(0, 255, 136, 0.45);
+        --glow2: 0 0 14px rgba(0, 204, 107, 0.45);
+        --glow3: 0 0 14px rgba(127, 255, 0, 0.45);
+      }
+
+      /* Ruby Theme */
+      body[data-theme="ruby"] {
+        --bg: #1a0008;
+        --panel: #270010;
+        --panel2: #330015;
+        --border: #4d0020;
+        --accent: #ff0055;
+        --accent2: #ff0088;
+        --accent3: #ff66aa;
+        --dim: #3d0018;
+        --text: #ffb5d5;
+        --text-dim: #8b1444;
+        --glow: 0 0 14px rgba(255, 0, 85, 0.45);
+        --glow2: 0 0 14px rgba(255, 0, 136, 0.45);
+        --glow3: 0 0 14px rgba(255, 102, 170, 0.45);
+      }
+
+      /* Ice Theme */
+      body[data-theme="ice"] {
+        --bg: #0a0f1a;
+        --panel: #0f1627;
+        --panel2: #151e33;
+        --border: #1c2d4d;
+        --accent: #00d5ff;
+        --accent2: #00a8ff;
+        --accent3: #66e0ff;
+        --dim: #18243d;
+        --text: #d5f0ff;
+        --text-dim: #4a6b8b;
+        --glow: 0 0 14px rgba(0, 213, 255, 0.45);
+        --glow2: 0 0 14px rgba(0, 168, 255, 0.45);
+        --glow3: 0 0 14px rgba(102, 224, 255, 0.45);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "Share Tech Mono", monospace;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        overflow-x: hidden;
+      }
+
+      body::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        background: repeating-linear-gradient(
+          0deg,
+          transparent,
+          transparent 2px,
+          rgba(0, 0, 0, 0.06) 2px,
+          rgba(0, 0, 0, 0.06) 4px
+        );
+        pointer-events: none;
+        z-index: 1000;
+      }
+
+      header {
+        width: 100%;
+        padding: 16px 28px 10px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        border-bottom: 1px solid var(--border);
+        background: var(--panel);
+      }
+
+      header h1 {
+        font-family: "Orbitron", sans-serif;
+        font-weight: 900;
+        font-size: 1.4rem;
+        letter-spacing: 0.15em;
+        color: var(--accent);
+        text-shadow: var(--glow);
+      }
+
+      header .sub {
+        font-size: 0.65rem;
+        color: var(--text-dim);
+        letter-spacing: 0.2em;
+      }
+
+      #status-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-left: auto;
+        font-size: 0.65rem;
+        color: var(--text-dim);
+      }
+      #status-dot {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: var(--text-dim);
+        transition: all 0.4s;
+      }
+      #status-dot.active {
+        background: var(--accent);
+        box-shadow: var(--glow);
+      }
+      #status-dot.error {
+        background: #ff4040;
+      }
+
+      .main-grid {
+        width: 100%;
+        max-width: 1000px;
+        padding: 20px 14px 40px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      .card {
+        background: var(--panel);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 18px;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .card::after {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--accent),
+          transparent
+        );
+        opacity: 0.45;
+      }
+      .card.c2::after {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--accent2),
+          transparent
+        );
+      }
+      .card.c3::after {
+        background: linear-gradient(
+          90deg,
+          transparent,
+          var(--accent3),
+          transparent
+        );
+      }
+      .card.full {
+        grid-column: 1 / -1;
+      }
+
+      .card-label {
+        font-family: "Orbitron", sans-serif;
+        font-size: 0.58rem;
+        letter-spacing: 0.22em;
+        color: var(--text-dim);
+        text-transform: uppercase;
+        margin-bottom: 14px;
+      }
+
+      .sr {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+      }
+      .sn {
+        font-size: 0.62rem;
+        color: var(--text-dim);
+        width: 82px;
+        flex-shrink: 0;
+        letter-spacing: 0.06em;
+      }
+
+      input[type="range"] {
+        -webkit-appearance: none;
+        appearance: none;
+        flex: 1;
+        height: 2px;
+        background: var(--dim);
+        border-radius: 2px;
+        outline: none;
+        cursor: pointer;
+      }
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        width: 13px;
+        height: 13px;
+        border-radius: 50%;
+        background: var(--accent);
+        box-shadow: var(--glow);
+        cursor: pointer;
+        transition: transform 0.1s;
+      }
+      input[type="range"]::-webkit-slider-thumb:hover {
+        transform: scale(1.35);
+      }
+      .c2 input[type="range"]::-webkit-slider-thumb {
+        background: var(--accent2);
+        box-shadow: var(--glow2);
+      }
+      .c3 input[type="range"]::-webkit-slider-thumb {
+        background: var(--accent3);
+        box-shadow: var(--glow3);
+      }
+
+      .sv {
+        font-size: 0.68rem;
+        color: var(--accent);
+        width: 48px;
+        text-align: right;
+        flex-shrink: 0;
+      }
+      .c2 .sv {
+        color: var(--accent2);
+      }
+      .c3 .sv {
+        color: var(--accent3);
+      }
+
+      .wave-row {
+        display: flex;
+        gap: 5px;
+        margin-bottom: 10px;
+      }
+      .wave-btn {
+        padding: 4px 9px;
+        font-size: 0.58rem;
+        letter-spacing: 0.08em;
+        border: 1px solid var(--dim);
+        background: var(--panel2);
+        color: var(--text-dim);
+        border-radius: 2px;
+        cursor: pointer;
+        transition: all 0.12s;
+        font-family: "Share Tech Mono", monospace;
+      }
+      .wave-btn.sel,
+      .wave-btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: rgba(0, 255, 213, 0.06);
+      }
+      .c2 .wave-btn.sel,
+      .c2 .wave-btn:hover {
+        border-color: var(--accent2);
+        color: var(--accent2);
+        background: rgba(255, 47, 255, 0.06);
+      }
+
+      .keyboard-wrap {
+        position: relative;
+        height: 118px;
+        display: flex;
+        justify-content: center;
+        user-select: none;
+        margin: 0 auto;
+      }
+
+      .key {
+        position: absolute;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 5px;
+        cursor: pointer;
+        font-size: 0.5rem;
+        letter-spacing: 0.04em;
+        transition:
+          background 0.04s,
+          box-shadow 0.04s;
+      }
+      .key.white {
+        width: 40px;
+        height: 118px;
+        background: linear-gradient(180deg, #181828 0%, #0e0e1e 100%);
+        border: 1px solid var(--dim);
+        border-top: none;
+        border-radius: 0 0 4px 4px;
+        color: var(--text-dim);
+        z-index: 1;
+      }
+      .key.white.active {
+        background: linear-gradient(
+          180deg,
+          rgba(0, 255, 213, 0.18) 0%,
+          rgba(0, 255, 213, 0.06) 100%
+        );
+        border-color: var(--accent);
+        box-shadow:
+          0 0 12px rgba(0, 255, 213, 0.2) inset,
+          0 0 6px rgba(0, 255, 213, 0.3);
+        color: var(--accent);
+      }
+      .key.black {
+        width: 24px;
+        height: 70px;
+        background: linear-gradient(180deg, #080812 0%, #050509 100%);
+        border: 1px solid #202038;
+        border-top: none;
+        border-radius: 0 0 3px 3px;
+        z-index: 2;
+        color: var(--text-dim);
+        font-size: 0.46rem;
+      }
+      .key.black.active {
+        background: linear-gradient(
+          180deg,
+          rgba(255, 47, 255, 0.22) 0%,
+          rgba(255, 47, 255, 0.08) 100%
+        );
+        border-color: var(--accent2);
+        box-shadow:
+          0 0 10px rgba(255, 47, 255, 0.25) inset,
+          0 0 6px rgba(255, 47, 255, 0.3);
+        color: var(--accent2);
+      }
+
+      .btn {
+        font-family: "Share Tech Mono", monospace;
+        font-size: 0.68rem;
+        letter-spacing: 0.1em;
+        padding: 7px 14px;
+        border-radius: 3px;
+        border: 1px solid var(--dim);
+        background: var(--panel2);
+        color: var(--text-dim);
+        cursor: pointer;
+        transition: all 0.13s;
+        text-transform: uppercase;
+      }
+      .btn:hover {
+        border-color: var(--accent);
+        color: var(--accent);
+        box-shadow: var(--glow);
+      }
+      .btn.on {
+        border-color: var(--accent);
+        color: var(--accent);
+        background: rgba(0, 255, 213, 0.07);
+        animation: pulse 1.6s ease-in-out infinite;
+      }
+      .btn.danger {
+        border-color: #ff4040;
+        color: #ff4040;
+      }
+      .btn.danger:hover {
+        background: rgba(255, 64, 64, 0.08);
+        box-shadow: 0 0 12px rgba(255, 64, 64, 0.4);
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          box-shadow: 0 0 6px rgba(0, 255, 213, 0.25);
+        }
+        50% {
+          box-shadow: 0 0 18px rgba(0, 255, 213, 0.65);
+        }
+      }
+
+      .transport-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-bottom: 10px;
+      }
+
+      .arp-row {
+        display: flex;
+        gap: 5px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+      }
+      .arp-btn {
+        font-family: "Orbitron", sans-serif;
+        font-size: 0.52rem;
+        letter-spacing: 0.1em;
+        padding: 5px 10px;
+        border-radius: 2px;
+        border: 1px solid var(--dim);
+        background: var(--panel2);
+        color: var(--text-dim);
+        cursor: pointer;
+        transition: all 0.12s;
+      }
+      .arp-btn:hover,
+      .arp-btn.sel {
+        border-color: var(--accent3);
+        color: var(--accent3);
+        background: rgba(255, 230, 0, 0.04);
+        box-shadow: var(--glow3);
+      }
+
+      #viz {
+        width: 100%;
+        height: 54px;
+        display: block;
+        background: var(--panel2);
+        border: 1px solid var(--border);
+        border-radius: 3px;
+        margin-top: 8px;
+      }
+
+      #cur-note-wrap {
+        margin-left: auto;
+        font-size: 0.62rem;
+        color: var(--text-dim);
+      }
+      #cur-note {
+        color: var(--accent2);
+        font-size: 0.8rem;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>FM·SYNTH</h1>
+      <span class="sub">CSOUND 7 WASM</span>
+      <div style="display: flex; gap: 8px; margin-left: auto">
+        <button
+          id="startBtn"
+          onclick="startAudio()"
+          style="
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #ffd700, #ffed4e);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 7px;
+            font-size: 0.8em;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: &quot;Share Tech Mono&quot;, monospace;
+          "
+        >
+          ▶ START
+        </button>
+        <button
+          id="stopBtn"
+          onclick="stopAudio()"
+          disabled
+          style="
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #f87171, #fca5a5);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 7px;
+            font-size: 0.8em;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: &quot;Share Tech Mono&quot;, monospace;
+            opacity: 0.4;
+          "
+        >
+          ■ STOP
+        </button>
+        <button
+          onclick="randomize()"
+          style="
+            padding: 8px 20px;
+            background: linear-gradient(135deg, #a78bfa, #c4b5fd);
+            color: #1a1a2e;
+            border: none;
+            border-radius: 7px;
+            font-size: 0.8em;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: &quot;Share Tech Mono&quot;, monospace;
+          "
+        >
+          🎲 RANDOM
+        </button>
+      </div>
+      <div id="status-bar">
+        <div id="status-dot"></div>
+        <span id="status-txt">OFFLINE</span>
+        <div id="cur-note-wrap">NOTE:&nbsp;<span id="cur-note">—</span></div>
+      </div>
+    </header>
+
+    <div
+      style="
+        width: 100%;
+        max-width: 1000px;
+        padding: 20px 14px 0;
+        display: flex;
+        gap: 12px;
+      "
+    >
+      <canvas
+        id="waveCanvas"
+        style="
+          flex: 1;
+          height: 120px;
+          background: var(--panel);
+          border-radius: 4px;
+          border: 1px solid var(--border);
+        "
+      ></canvas>
+      <canvas
+        id="fftCanvas"
+        style="
+          flex: 1;
+          height: 120px;
+          background: var(--panel);
+          border-radius: 4px;
+          border: 1px solid var(--border);
+        "
+      ></canvas>
+    </div>
+
+    <div class="main-grid">
+      <div class="card" id="fm-card">
+        <div class="card-label">// FM OPERATOR</div>
+
+        <div class="sr">
+          <span class="sn">CARRIER ×</span>
+          <input
+            type="range"
+            id="s-cratio"
+            min="0.25"
+            max="8"
+            step="0.25"
+            value="1"
+          />
+          <span class="sv" id="v-cratio">1.00</span>
+        </div>
+
+        <div class="sr">
+          <span class="sn">MODULATOR ×</span>
+          <input
+            type="range"
+            id="s-mratio"
+            min="0.25"
+            max="8"
+            step="0.25"
+            value="2"
+          />
+          <span class="sv" id="v-mratio">2.00</span>
+        </div>
+
+        <div class="sr">
+          <span class="sn">MOD INDEX</span>
+          <input
+            type="range"
+            id="s-midx"
+            min="0"
+            max="20"
+            step="0.1"
+            value="4"
+          />
+          <span class="sv" id="v-midx">4.0</span>
+        </div>
+
+        <div class="sr">
+          <span class="sn">MOD DEPTH</span>
+          <input
+            type="range"
+            id="s-mdepth"
+            min="0"
+            max="1"
+            step="0.01"
+            value="1"
+          />
+          <span class="sv" id="v-mdepth">1.00</span>
+        </div>
+
+        <div class="card-label" style="margin-top: 10px">CARRIER WAVE</div>
+        <div class="wave-row" id="cwave">
+          <button class="wave-btn sel" data-w="1">SINE</button>
+          <button class="wave-btn" data-w="2">TRI</button>
+          <button class="wave-btn" data-w="3">SAW</button>
+          <button class="wave-btn" data-w="4">SQR</button>
+        </div>
+
+        <div class="card-label">MODULATOR WAVE</div>
+        <div class="wave-row c2" id="mwave">
+          <button class="wave-btn sel" data-w="1">SINE</button>
+          <button class="wave-btn" data-w="2">TRI</button>
+          <button class="wave-btn" data-w="3">SAW</button>
+          <button class="wave-btn" data-w="4">SQR</button>
+        </div>
+      </div>
+
+      <div class="card c2">
+        <div class="card-label">// PRESETS &middot; THEME</div>
+
+        <div class="sr" style="margin-bottom: 14px">
+          <select
+            id="presetSelect"
+            style="
+              width: 100%;
+              padding: 6px 8px;
+              background: var(--panel2);
+              color: var(--text);
+              border: 1px solid var(--dim);
+              border-radius: 3px;
+              font-family: &quot;Share Tech Mono&quot;, monospace;
+              font-size: 0.7rem;
+            "
+          >
+            <option value="">-- SELECT PRESET --</option>
+          </select>
+        </div>
+
+        <div style="display: flex; gap: 6px; margin-bottom: 14px">
+          <button
+            class="btn-secondary"
+            style="flex: 1; padding: 6px 10px; font-size: 0.65rem"
+            onclick="savePreset()"
+          >
+            💾 SAVE
+          </button>
+          <button
+            class="btn-secondary"
+            style="flex: 1; padding: 6px 10px; font-size: 0.65rem"
+            onclick="deletePreset()"
+          >
+            🗑️ DEL
+          </button>
+        </div>
+
+        <div class="sr">
+          <span class="sn">COLOR THEME</span>
+          <select
+            id="themeSelect"
+            style="
+              width: 100%;
+              padding: 6px 8px;
+              background: var(--panel2);
+              color: var(--text);
+              border: 1px solid var(--dim);
+              border-radius: 3px;
+              font-family: &quot;Share Tech Mono&quot;, monospace;
+              font-size: 0.7rem;
+            "
+          >
+            <option value="cyan">Cyan</option>
+            <option value="amber">Amber</option>
+            <option value="emerald">Emerald</option>
+            <option value="ruby">Ruby</option>
+            <option value="ice">Ice</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="card c2">
+        <div class="card-label">// ENVELOPE + AMP</div>
+
+        <div class="sr">
+          <span class="sn">ATTACK</span>
+          <input
+            type="range"
+            id="s-atk"
+            min="0.001"
+            max="2"
+            step="0.001"
+            value="0.015"
+          />
+          <span class="sv" id="v-atk">15ms</span>
+        </div>
+
+        <div class="sr">
+          <span class="sn">DECAY</span>
+          <input
+            type="range"
+            id="s-dec"
+            min="0.001"
+            max="2"
+            step="0.001"
+            value="0.18"
+          />
+          <span class="sv" id="v-dec">0.18s</span>
+        </div>
+
+        <div class="sr">
+          <span class="sn">SUSTAIN</span>
+          <input
+            type="range"
+            id="s-sus"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.65"
+          />
+          <span class="sv" id="v-sus">0.65</span>
+        </div>
+
+        <div class="sr">
+          <span class="sn">RELEASE</span>
+          <input
+            type="range"
+            id="s-rel"
+            min="0.01"
+            max="4"
+            step="0.01"
+            value="0.6"
+          />
+          <span class="sv" id="v-rel">0.60s</span>
+        </div>
+
+        <div class="sr">
+          <span class="sn">VOLUME</span>
+          <input
+            type="range"
+            id="s-vol"
+            min="0"
+            max="0.9"
+            step="0.01"
+            value="0.6"
+          />
+          <span class="sv" id="v-vol">0.60</span>
+        </div>
+
+        <div class="sr">
+          <span class="sn">PAN</span>
+          <input
+            type="range"
+            id="s-pan"
+            min="-1"
+            max="1"
+            step="0.01"
+            value="0"
+          />
+          <span class="sv" id="v-pan">C</span>
+        </div>
+      </div>
+
+      <div class="card c3">
+        <div class="card-label">// GLOBAL REVERB</div>
+
+        <div class="sr">
+          <span class="sn">ROOM SIZE</span>
+          <input
+            type="range"
+            id="s-rsize"
+            min="0.05"
+            max="0.98"
+            step="0.01"
+            value="0.78"
+          />
+          <span class="sv" id="v-rsize">0.78</span>
+        </div>
+
+        <div class="sr">
+          <span class="sn">DAMPING</span>
+          <input
+            type="range"
+            id="s-rdamp"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.5"
+          />
+          <span class="sv" id="v-rdamp">0.50</span>
+        </div>
+
+        <div class="sr">
+          <span class="sn">DRY / WET</span>
+          <input
+            type="range"
+            id="s-rmix"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.28"
+          />
+          <span class="sv" id="v-rmix">0.28</span>
+        </div>
+
+        <div class="sr">
+          <span class="sn">PRE-DELAY</span>
+          <input
+            type="range"
+            id="s-rpre"
+            min="0"
+            max="0.1"
+            step="0.001"
+            value="0.01"
+          />
+          <span class="sv" id="v-rpre">10ms</span>
+        </div>
+      </div>
+
+      <div class="card c2">
+        <div class="card-label">// MULTITAP DELAY</div>
+
+        <div class="sr">
+          <span class="sn">TIME</span>
+          <input
+            type="range"
+            id="s-deltime"
+            min="0.05"
+            max="1"
+            step="0.01"
+            value="0.3"
+          />
+          <span class="sv" id="v-deltime">0.30s</span>
+        </div>
+
+        <div class="sr">
+          <span class="sn">MIX</span>
+          <input
+            type="range"
+            id="s-delmix"
+            min="0"
+            max="0.8"
+            step="0.01"
+            value="0"
+          />
+          <span class="sv" id="v-delmix">0%</span>
+        </div>
+      </div>
+
+      <div class="card c3">
+        <div class="card-label">// CHORUS &amp; STEREO</div>
+
+        <div class="sr">
+          <span class="sn">DEPTH</span>
+          <input
+            type="range"
+            id="s-chrdepth"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0"
+          />
+          <span class="sv" id="v-chrdepth">0.00</span>
+        </div>
+
+        <div class="sr">
+          <span class="sn">RATE Hz</span>
+          <input
+            type="range"
+            id="s-chrrate"
+            min="0.1"
+            max="6"
+            step="0.1"
+            value="1.5"
+          />
+          <span class="sv" id="v-chrrate">1.5Hz</span>
+        </div>
+
+        <div class="sr">
+          <span class="sn">WIDTH</span>
+          <input
+            type="range"
+            id="s-width"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.5"
+          />
+          <span class="sv" id="v-width">50%</span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-label">// LFO MODULATION</div>
+
+        <div class="sr">
+          <span class="sn">RATE Hz</span>
+          <input
+            type="range"
+            id="s-lrate"
+            min="0.01"
+            max="20"
+            step="0.01"
+            value="2"
+          />
+          <span class="sv" id="v-lrate">2.00</span>
+        </div>
+
+        <div class="sr">
+          <span class="sn">INDEX MOD</span>
+          <input
+            type="range"
+            id="s-ldepth"
+            min="0"
+            max="10"
+            step="0.1"
+            value="1"
+          />
+          <span class="sv" id="v-ldepth">1.0</span>
+        </div>
+
+        <div class="sr">
+          <span class="sn">VIBRATO ¢</span>
+          <input
+            type="range"
+            id="s-lvib"
+            min="0"
+            max="50"
+            step="0.1"
+            value="0"
+          />
+          <span class="sv" id="v-lvib">0.0</span>
+        </div>
+
+        <canvas id="viz"></canvas>
+      </div>
+
+      <div class="card full">
+        <div class="card-label" style="margin-bottom: 8px">
+          // KEYBOARD &nbsp;<span style="font-size: 0.55rem; opacity: 0.4"
+            >(QWERTY: A S D F G H J K &nbsp;&middot;&nbsp; W E T Y U)</span
+          >
+        </div>
+        <div class="keyboard-wrap" id="keyboard"></div>
+      </div>
+
+      <div class="card full c3">
+        <div class="card-label">// TRANSPORT &middot; ARPEGGIATOR</div>
+        <div class="transport-row">
+          <button class="btn" id="btn-hold">HOLD</button>
+          <button class="btn" id="btn-arp">ARP</button>
+          <button class="btn danger" id="btn-panic">PANIC / ALL OFF</button>
+
+          <div class="sr" style="flex: 1; margin: 0; margin-left: 16px">
+            <span class="sn">NOTE DUR</span>
+            <input
+              type="range"
+              id="s-notedur"
+              min="0.1"
+              max="4"
+              step="0.1"
+              value="0.5"
+            />
+            <span class="sv" id="v-notedur">0.5s</span>
+          </div>
+
+          <div class="sr" style="flex: 1; margin: 0; margin-left: 16px">
+            <span class="sn">ARP TEMPO</span>
+            <input
+              type="range"
+              id="s-bpm"
+              min="40"
+              max="300"
+              step="1"
+              value="120"
+            />
+            <span class="sv" id="v-bpm">120</span>
+          </div>
+        </div>
+
+        <div class="card-label" style="margin-top: 2px">ARP PATTERN</div>
+        <div class="arp-row" id="arp-btns">
+          <button class="arp-btn sel" data-p="up">UP</button>
+          <button class="arp-btn" data-p="down">DOWN</button>
+          <button class="arp-btn" data-p="updown">UP-DOWN</button>
+          <button class="arp-btn" data-p="random">RANDOM</button>
+          <button class="arp-btn" data-p="chord">CHORD</button>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { Csound } from "@csound/browser";
+
+      // ── Csound Orchestra ──────────────────────────────────────────────────────────
+      const ORC = `
+sr     = 44100
+ksmps  = 32
+nchnls = 2
+0dbfs  = 1
+
+giSine ftgen 1, 0, 4096, 10, 1
+giTri  ftgen 2, 0, 4096, 7,  0, 1024, 1, 2048, -1, 1024, 0
+giSaw  ftgen 3, 0, 4096, 7,  1, 4096, -1
+giSqr  ftgen 4, 0, 4096, 7,  1, 2048, 1, 0, -1, 2048, -1
+
+gaDryL  init 0
+gaDryR  init 0
+gaRvbL  init 0
+gaRvbR  init 0
+gkVol   init 0.5
+gkRvbTime  init 0.88
+
+maxalloc 1, 8
+
+instr 1
+  iFreq = p4
+  iVel  = p5 / 127
+
+  kCR    chnget "cratio"
+  kMR    chnget "mratio"
+  kMI    chnget "midx"
+  kMD    chnget "mdepth"
+  iAtk   chnget "atk"
+  iDec   chnget "dec"
+  iSus   chnget "sus"
+  iRel   chnget "rel"
+  kVol   chnget "vol"
+  kPan   chnget "pan"
+  kLR    chnget "lrate"
+  kLD    chnget "ldepth"
+  kLV    chnget "lvib"
+
+  kLfo oscili 1, kLR
+  kVibCents = kLfo * kLV
+  kFreqMod = iFreq * (pow(2, kVibCents / 1200) - 1)
+
+  kEnv madsr iAtk, iDec, iSus, iRel
+
+  kMFreq = (iFreq + kFreqMod) * kMR
+  kMImod = kMI + kLfo * kLD
+  kMAmp  = kMFreq * kMImod * kMD
+
+  iMW   chnget "mwave"
+  iMtbl = (iMW == 2 ? 2 : (iMW == 3 ? 3 : (iMW == 4 ? 4 : 1)))
+  aMod oscili kMAmp, kMFreq, iMtbl
+
+  kCFreq = (iFreq + kFreqMod) * kCR
+  iCW   chnget "cwave"
+  iCtbl = (iCW == 2 ? 2 : (iCW == 3 ? 3 : (iCW == 4 ? 4 : 1)))
+  aCar oscili kEnv * iVel * kVol * 0.45, kCFreq + aMod, iCtbl
+
+  kL = sqrt(0.5 * (1 - kPan))
+  kR = sqrt(0.5 * (1 + kPan))
+
+  kRMix chnget "rmix"
+  gaRvbL += aCar * kL * kRMix
+  gaRvbR += aCar * kR * kRMix
+  
+  outs aCar * kL * (1 - kRMix), aCar * kR * (1 - kRMix)
+endin
+
+instr 99
+  aRvbL, aRvbR reverbsc gaRvbL, gaRvbR, gkRvbTime, 10000
+  outs aRvbL * 0.25, aRvbR * 0.25
+  clear gaRvbL, gaRvbR
+endin
+`;
+
+      // ── State ─────────────────────────────────────────────────────────────────────
+      let cs = null;
+      let CsoundFactory = null;
+      let audioStarted = false;
+      let analyser = null;
+      let animFrame = null;
+      let noteCounter = 0;
+      let carrierWave = 1;
+      let modWave = 1;
+      let holdMode = false;
+      let arpMode = false;
+      let arpPat = "up";
+      let arpBpm = 120;
+      let arpTimer = null;
+      let arpIdx = 0;
+      let lastArpNote = -1;
+      const arpNotes = [];
+      const heldMidi = new Set();
+      const sustainedMidi = new Set();
+      const activeNotes = new Map(); // midi → unique fractional p1
+
+      // ── Visualizers ───────────────────────────────────────────────────────────────
+      function startVisualizerLoop() {
+        if (!analyser) return;
+        const wC = document.getElementById("waveCanvas");
+        const fC = document.getElementById("fftCanvas");
+        const wX = wC.getContext("2d");
+        const fX = fC.getContext("2d");
+        const bLen = analyser.frequencyBinCount;
+        const tD = new Uint8Array(bLen);
+        const fD = new Uint8Array(bLen);
+
+        function draw() {
+          animFrame = requestAnimationFrame(draw);
+          const dpr = window.devicePixelRatio || 1;
+          if (wC.width !== wC.clientWidth * dpr) {
+            wC.width = wC.clientWidth * dpr;
+            wC.height = wC.clientHeight * dpr;
+            fC.width = fC.clientWidth * dpr;
+            fC.height = fC.clientHeight * dpr;
+          }
+          const w = wC.width,
+            h = wC.height,
+            fw = fC.width,
+            fh = fC.height;
+          analyser.getByteTimeDomainData(tD);
+          analyser.getByteFrequencyData(fD);
+
+          wX.fillStyle = "rgba(8,8,16,0.3)";
+          wX.fillRect(0, 0, w, h);
+          wX.lineWidth = 2 * dpr;
+          wX.strokeStyle = "#00ffd5";
+          wX.beginPath();
+          const sl = w / bLen;
+          for (let i = 0; i < bLen; i++) {
+            const v = tD[i] / 128,
+              y = (v * h) / 2;
+            if (i === 0) wX.moveTo(0, y);
+            else wX.lineTo(i * sl, y);
+          }
+          wX.stroke();
+
+          fX.fillStyle = "rgba(8,8,16,0.3)";
+          fX.fillRect(0, 0, fw, fh);
+          const bars = Math.floor(bLen * 0.4),
+            bW = fw / bars;
+          for (let i = 0; i < bars; i++) {
+            const val = fD[i] / 255,
+              bH = val * fh;
+            fX.fillStyle = `hsla(${180 + val * 20},100%,${40 + val * 30}%,${0.6 + val * 0.4})`;
+            fX.fillRect(i * bW, fh - bH, bW > 2 ? bW - 1 : bW, bH);
+          }
+        }
+        draw();
+      }
+
+      function stopVisualizer() {
+        if (animFrame) {
+          cancelAnimationFrame(animFrame);
+          animFrame = null;
+        }
+      }
+
+      // ── Init ──────────────────────────────────────────────────────────────────────
+      window.startAudio = async function () {
+        if (audioStarted) return;
+        try {
+          setStatus("LOADING...", false);
+
+          // Only load Csound module once
+          if (!CsoundFactory) {
+            const mod = await import(
+              "https://cdn.jsdelivr.net/npm/@csound/browser@7.0.0-beta26/dist/csound.js"
+            );
+            CsoundFactory = mod.Csound;
+          }
+
+          cs = await CsoundFactory({
+            useWorker: false,
+            useSPN: false,
+            outputChannelCount: 2,
+          });
+
+          await cs.setOption("-odac");
+          await cs.setOption("-m0");
+          await cs.compileOrc(ORC);
+          await cs.start();
+
+          // Start reverb instrument
+          await cs.inputMessage("i 99 0 -1");
+
+          await applyAllChannels();
+
+          try {
+            const ctx = await cs.getAudioContext();
+            if (ctx) {
+              analyser = ctx.createAnalyser();
+              analyser.fftSize = 2048;
+              analyser.smoothingTimeConstant = 0.8;
+              const node = await cs.getNode();
+              if (node) {
+                node.connect(analyser);
+                analyser.connect(ctx.destination);
+                startVisualizerLoop();
+              }
+            }
+          } catch (ve) {
+            console.log("Viz error:", ve.message);
+          }
+
+          audioStarted = true;
+          document.getElementById("startBtn").disabled = true;
+          document.getElementById("startBtn").style.opacity = "0.4";
+          document.getElementById("stopBtn").disabled = false;
+          document.getElementById("stopBtn").style.opacity = "1";
+          setStatus("ACTIVE - USB MIDI enabled", true);
+        } catch (e) {
+          setStatus("ERROR", false, true);
+          console.error(e);
+          alert("Csound initialization failed: " + e.message);
+        }
+      };
+
+      window.stopAudio = async function () {
+        if (!audioStarted || !cs) return;
+        try {
+          stopVisualizer();
+          await cs.stop();
+          if (typeof cs.destroy === "function") await cs.destroy();
+          else if (typeof cs.reset === "function") await cs.reset();
+        } catch (e) {
+          console.log("Stop error:", e.message);
+        }
+        cs = null;
+        analyser = null;
+        audioStarted = false;
+        document.getElementById("startBtn").disabled = false;
+        document.getElementById("startBtn").style.opacity = "1";
+        document.getElementById("stopBtn").disabled = true;
+        document.getElementById("stopBtn").style.opacity = "0.4";
+        setStatus("OFFLINE", false);
+      };
+
+      // ── USB MIDI Support ──────────────────────────────────────────────────────────
+      async function initMIDI() {
+        try {
+          const midiAccess = await navigator.requestMIDIAccess();
+          const inputs = midiAccess.inputs.values();
+          for (let input of inputs) {
+            input.onmidimessage = handleMIDIMessage;
+          }
+          midiAccess.onstatechange = (event) => {
+            if (event.port.type === "input") {
+              if (event.port.state === "connected") {
+                event.port.onmidimessage = handleMIDIMessage;
+              }
+            }
+          };
+          console.log("MIDI initialized");
+        } catch (err) {
+          console.log("MIDI not supported or denied: " + err.message);
+        }
+      }
+
+      function handleMIDIMessage(message) {
+        const [command, note, velocity] = message.data;
+        const cmdType = command & 0xf0;
+        const channel = command & 0x0f;
+
+        if (cmdType === 0x90 && velocity > 0) {
+          // Note On
+          triggerOn(note);
+          console.log("MIDI Note On:", note, velocity);
+        } else if (cmdType === 0x80 || (cmdType === 0x90 && velocity === 0)) {
+          // Note Off
+          triggerOff(note);
+          console.log("MIDI Note Off:", note);
+        }
+      }
+
+      // Initialize MIDI on page load
+      initMIDI();
+
+      function setStatus(txt, ok, err) {
+        document.getElementById("status-dot").className = ok
+          ? "active"
+          : err
+            ? "error"
+            : "";
+        document.getElementById("status-txt").textContent = txt;
+      }
+
+      // ── Channels ──────────────────────────────────────────────────────────────────
+      const CHANNELS = {
+        cratio: () => parseFloat(document.getElementById("s-cratio").value),
+        mratio: () => parseFloat(document.getElementById("s-mratio").value),
+        midx: () => parseFloat(document.getElementById("s-midx").value),
+        mdepth: () => parseFloat(document.getElementById("s-mdepth").value),
+        atk: () => parseFloat(document.getElementById("s-atk").value),
+        dec: () => parseFloat(document.getElementById("s-dec").value),
+        sus: () => parseFloat(document.getElementById("s-sus").value),
+        rel: () => parseFloat(document.getElementById("s-rel").value),
+        vol: () => parseFloat(document.getElementById("s-vol").value),
+        pan: () => parseFloat(document.getElementById("s-pan").value),
+        lrate: () => parseFloat(document.getElementById("s-lrate").value),
+        ldepth: () => parseFloat(document.getElementById("s-ldepth").value),
+        lvib: () => parseFloat(document.getElementById("s-lvib").value),
+        rsize: () => parseFloat(document.getElementById("s-rsize").value),
+        rdamp: () => parseFloat(document.getElementById("s-rdamp").value),
+        rmix: () => parseFloat(document.getElementById("s-rmix").value),
+        rpre: () => parseFloat(document.getElementById("s-rpre").value),
+        cwave: () => carrierWave,
+        mwave: () => modWave,
+      };
+
+      async function applyAllChannels() {
+        for (const [name, fn] of Object.entries(CHANNELS)) {
+          await cs.setControlChannel(name, fn());
+        }
+      }
+
+      async function setCh(name) {
+        if (cs) await cs.setControlChannel(name, CHANNELS[name]());
+      }
+
+      async function updateFx() {
+        if (!cs || !audioStarted) return;
+        await cs.setControlChannel(
+          "rvbtime",
+          parseFloat(document.getElementById("s-rsize").value),
+        );
+        await cs.setControlChannel(
+          "vol",
+          parseFloat(document.getElementById("s-vol").value),
+        );
+      }
+
+      // ── Sliders ───────────────────────────────────────────────────────────────────
+      const SLIDERS = [
+        ["s-cratio", "v-cratio", (v) => v.toFixed(2), "cratio"],
+        ["s-mratio", "v-mratio", (v) => v.toFixed(2), "mratio"],
+        ["s-midx", "v-midx", (v) => v.toFixed(1), "midx"],
+        ["s-mdepth", "v-mdepth", (v) => v.toFixed(2), "mdepth"],
+        [
+          "s-atk",
+          "v-atk",
+          (v) => (v < 0.1 ? Math.round(v * 1000) + "ms" : v.toFixed(2) + "s"),
+          "atk",
+        ],
+        ["s-dec", "v-dec", (v) => v.toFixed(2) + "s", "dec"],
+        ["s-sus", "v-sus", (v) => v.toFixed(2), "sus"],
+        ["s-rel", "v-rel", (v) => v.toFixed(2) + "s", "rel"],
+        ["s-vol", "v-vol", (v) => v.toFixed(2), "vol"],
+        [
+          "s-pan",
+          "v-pan",
+          (v) =>
+            Math.abs(v) < 0.01
+              ? "C"
+              : (v > 0 ? "R" : "L") + Math.round(Math.abs(v) * 100),
+          "pan",
+        ],
+        ["s-lrate", "v-lrate", (v) => v.toFixed(2), "lrate"],
+        ["s-ldepth", "v-ldepth", (v) => v.toFixed(1), "ldepth"],
+        ["s-lvib", "v-lvib", (v) => v.toFixed(1), "lvib"],
+        ["s-rsize", "v-rsize", (v) => v.toFixed(2), "rsize"],
+        ["s-rdamp", "v-rdamp", (v) => v.toFixed(2), "rdamp"],
+        ["s-rmix", "v-rmix", (v) => v.toFixed(2), "rmix"],
+        ["s-rpre", "v-rpre", (v) => Math.round(v * 1000) + "ms", "rpre"],
+        ["s-deltime", "v-deltime", (v) => v.toFixed(2) + "s", null],
+        ["s-delmix", "v-delmix", (v) => Math.round(v * 100) + "%", null],
+        ["s-chrdepth", "v-chrdepth", (v) => v.toFixed(2), null],
+        ["s-chrrate", "v-chrrate", (v) => v.toFixed(1) + "Hz", null],
+        ["s-width", "v-width", (v) => Math.round(v * 100) + "%", null],
+        ["s-notedur", "v-notedur", (v) => v.toFixed(1) + "s", null],
+        ["s-bpm", "v-bpm", (v) => Math.round(v) + "", null],
+      ];
+
+      for (const [sid, vid, fmt, ch] of SLIDERS) {
+        const el = document.getElementById(sid);
+        const vl = document.getElementById(vid);
+        el.addEventListener("input", () => {
+          vl.textContent = fmt(parseFloat(el.value));
+          if (ch) setCh(ch);
+          if (sid === "s-bpm" && arpMode) restartArp();
+        });
+      }
+
+      // ── Wave buttons ──────────────────────────────────────────────────────────────
+      document.getElementById("cwave").addEventListener("click", (e) => {
+        const b = e.target.closest(".wave-btn");
+        if (!b) return;
+        document
+          .querySelectorAll("#cwave .wave-btn")
+          .forEach((x) => x.classList.remove("sel"));
+        b.classList.add("sel");
+        carrierWave = parseInt(b.dataset.w);
+        setCh("cwave");
+      });
+      document.getElementById("mwave").addEventListener("click", (e) => {
+        const b = e.target.closest(".wave-btn");
+        if (!b) return;
+        document
+          .querySelectorAll("#mwave .wave-btn")
+          .forEach((x) => x.classList.remove("sel"));
+        b.classList.add("sel");
+        modWave = parseInt(b.dataset.w);
+        setCh("mwave");
+      });
+
+      // ── Arp pattern buttons ───────────────────────────────────────────────────────
+      document.querySelectorAll(".arp-btn").forEach((b) => {
+        b.addEventListener("click", () => {
+          document
+            .querySelectorAll(".arp-btn")
+            .forEach((x) => x.classList.remove("sel"));
+          b.classList.add("sel");
+          arpPat = b.dataset.p;
+          arpIdx = 0;
+        });
+      });
+
+      // ── Note helpers ──────────────────────────────────────────────────────────────
+      const NOTE_NAMES = [
+        "C",
+        "C#",
+        "D",
+        "D#",
+        "E",
+        "F",
+        "F#",
+        "G",
+        "G#",
+        "A",
+        "A#",
+        "B",
+      ];
+      function midi2hz(m) {
+        return 440 * Math.pow(2, (m - 69) / 12);
+      }
+      function midi2name(m) {
+        return NOTE_NAMES[m % 12] + (Math.floor(m / 12) - 1);
+      }
+
+      async function noteOn(midi, vel = 100) {
+        if (!cs || !audioStarted) return;
+        if (activeNotes.has(midi)) await noteOff(midi);
+
+        const id = 1 + (noteCounter++ % 100) / 100;
+        const dur = parseFloat(document.getElementById("s-notedur").value);
+        activeNotes.set(midi, id);
+        document.getElementById("cur-note").textContent = midi2name(midi);
+
+        const msg = `i ${id.toFixed(2)} 0 ${dur.toFixed(2)} ${midi2hz(midi).toFixed(4)} ${vel}`;
+        await cs.inputMessage(msg);
+        highlightKey(midi, true);
+      }
+
+      async function noteOff(midi) {
+        if (!cs) return;
+        const id = activeNotes.get(midi);
+        if (id === undefined) return;
+        activeNotes.delete(midi);
+        // With madsr, send turnoff2 to trigger release immediately
+        await cs.inputMessage(`i -${id.toFixed(2)} 0 0.01`);
+        highlightKey(midi, false);
+      }
+
+      function highlightKey(midi, on) {
+        const k = document.querySelector(`.key[data-midi="${midi}"]`);
+        if (k) k.classList.toggle("active", on);
+      }
+
+      async function panic() {
+        const mids = [...activeNotes.keys()];
+        for (const midi of mids) await noteOff(midi);
+        heldMidi.clear();
+        sustainedMidi.clear();
+        if (arpTimer) {
+          clearInterval(arpTimer);
+          arpTimer = null;
+        }
+        arpMode = false;
+        lastArpNote = -1;
+        updateBtn("btn-arp", false, "ARP");
+        document
+          .querySelectorAll(".key")
+          .forEach((k) => k.classList.remove("active"));
+        document.getElementById("cur-note").textContent = "—";
+      }
+
+      // ── Hold ──────────────────────────────────────────────────────────────────────
+      document.getElementById("btn-hold").addEventListener("click", () => {
+        holdMode = !holdMode;
+        updateBtn("btn-hold", holdMode, holdMode ? "HOLD ON" : "HOLD");
+        if (!holdMode) {
+          for (const m of sustainedMidi) {
+            if (!heldMidi.has(m)) noteOff(m);
+          }
+          sustainedMidi.clear();
+        }
+      });
+
+      // ── Arpeggiator ───────────────────────────────────────────────────────────────
+      document.getElementById("btn-arp").addEventListener("click", () => {
+        arpMode = !arpMode;
+        updateBtn("btn-arp", arpMode, arpMode ? "ARP ON" : "ARP");
+        if (arpMode) {
+          arpIdx = 0;
+          lastArpNote = -1;
+          startArp();
+        } else {
+          clearInterval(arpTimer);
+          arpTimer = null;
+          panic();
+        }
+      });
+
+      document.getElementById("btn-panic").addEventListener("click", panic);
+
+      function startArp() {
+        clearInterval(arpTimer);
+        const bpm = parseFloat(document.getElementById("s-bpm").value);
+        const ms = (60 / bpm) * 1000 * 0.5;
+        arpTimer = setInterval(arpStep, ms);
+      }
+
+      function restartArp() {
+        if (arpMode) startArp();
+      }
+
+      async function arpStep() {
+        const pool = [...new Set([...heldMidi, ...sustainedMidi])].sort(
+          (a, b) => a - b,
+        );
+        if (!pool.length) return;
+
+        if (arpPat === "chord") {
+          if (lastArpNote !== -1) {
+            await noteOff(lastArpNote);
+            lastArpNote = -1;
+          }
+          for (const n of pool) await noteOn(n);
+          return;
+        }
+
+        let notes = [...pool];
+        if (arpPat === "down") notes.reverse();
+
+        let idx;
+        if (arpPat === "random") {
+          idx = Math.floor(Math.random() * notes.length);
+        } else if (arpPat === "updown") {
+          const span = notes.length > 1 ? notes.length * 2 - 2 : 1;
+          const pos = arpIdx % span;
+          idx = pos < notes.length ? pos : span - pos;
+          arpIdx++;
+        } else {
+          idx = arpIdx % notes.length;
+          arpIdx++;
+        }
+
+        if (lastArpNote !== -1) await noteOff(lastArpNote);
+        await noteOn(notes[idx]);
+        lastArpNote = notes[idx];
+      }
+
+      // ── Keyboard ──────────────────────────────────────────────────────────────────
+      const KEYS = [
+        { t: "w", m: 60, l: "C4" },
+        { t: "b", m: 61, l: "C#" },
+        { t: "w", m: 62, l: "D" },
+        { t: "b", m: 63, l: "D#" },
+        { t: "w", m: 64, l: "E" },
+        { t: "w", m: 65, l: "F" },
+        { t: "b", m: 66, l: "F#" },
+        { t: "w", m: 67, l: "G" },
+        { t: "b", m: 68, l: "G#" },
+        { t: "w", m: 69, l: "A" },
+        { t: "b", m: 70, l: "A#" },
+        { t: "w", m: 71, l: "B" },
+        { t: "w", m: 72, l: "C5" },
+        { t: "b", m: 73, l: "C#" },
+        { t: "w", m: 74, l: "D" },
+        { t: "b", m: 75, l: "D#" },
+        { t: "w", m: 76, l: "E" },
+      ];
+      const WW = 40;
+
+      (function buildKbd() {
+        const wrap = document.getElementById("keyboard");
+        let wc = 0;
+        KEYS.forEach((k) => {
+          const el = document.createElement("div");
+          el.className = "key " + (k.t === "w" ? "white" : "black");
+          el.dataset.midi = k.m;
+          el.textContent = k.l;
+          el.style.left = (k.t === "w" ? wc * WW : wc * WW - 12) + "px";
+          if (k.t === "w") wc++;
+
+          el.addEventListener("mousedown", (e) => {
+            e.preventDefault();
+            triggerOn(k.m);
+          });
+          el.addEventListener("mouseup", () => triggerOff(k.m));
+          el.addEventListener("mouseleave", () => {
+            if (!holdMode) triggerOff(k.m);
+          });
+          el.addEventListener(
+            "touchstart",
+            (e) => {
+              e.preventDefault();
+              triggerOn(k.m);
+            },
+            { passive: false },
+          );
+          el.addEventListener("touchend", () => triggerOff(k.m));
+          wrap.appendChild(el);
+        });
+        wrap.style.width = wc * WW + "px";
+      })();
+
+      function triggerOn(midi) {
+        heldMidi.add(midi);
+        if (holdMode) sustainedMidi.add(midi);
+        if (!arpMode) noteOn(midi);
+      }
+
+      function triggerOff(midi) {
+        heldMidi.delete(midi);
+        if (!holdMode && !arpMode) noteOff(midi);
+      }
+
+      // ── QWERTY ────────────────────────────────────────────────────────────────────
+      const QW = {
+        a: 60,
+        w: 61,
+        s: 62,
+        e: 63,
+        d: 64,
+        f: 65,
+        t: 66,
+        g: 67,
+        y: 68,
+        h: 69,
+        u: 70,
+        j: 71,
+        k: 72,
+        o: 73,
+        l: 74,
+        p: 75,
+      };
+      document.addEventListener("keydown", (e) => {
+        if (e.repeat || e.metaKey || e.ctrlKey) return;
+        const m = QW[e.key.toLowerCase()];
+        if (m !== undefined) {
+          e.preventDefault();
+          triggerOn(m);
+        }
+      });
+      document.addEventListener("keyup", (e) => {
+        const m = QW[e.key.toLowerCase()];
+        if (m !== undefined) triggerOff(m);
+      });
+
+      // ── Presets ───────────────────────────────────────────────────────────────────
+      const PRESETS_KEY = "fmSynthPresets_v1";
+      const PARAM_IDS = [
+        "s-cratio",
+        "s-mratio",
+        "s-midx",
+        "s-mdepth",
+        "s-atk",
+        "s-dec",
+        "s-sus",
+        "s-rel",
+        "s-vol",
+        "s-pan",
+        "s-lrate",
+        "s-ldepth",
+        "s-lvib",
+        "s-rsize",
+        "s-rdamp",
+        "s-rmix",
+        "s-rpre",
+        "s-bpm",
+      ];
+
+      function getPresets() {
+        try {
+          return JSON.parse(localStorage.getItem(PRESETS_KEY)) || {};
+        } catch (e) {
+          return {};
+        }
+      }
+
+      function savePresetsToStorage(p) {
+        localStorage.setItem(PRESETS_KEY, JSON.stringify(p));
+      }
+
+      function refreshPresetList(sel) {
+        const s = document.getElementById("presetSelect");
+        const p = getPresets();
+        const n = Object.keys(p).sort();
+        s.innerHTML = '<option value="">-- SELECT PRESET --</option>';
+        for (let i = 0; i < n.length; i++) {
+          const o = document.createElement("option");
+          o.value = n[i];
+          o.textContent = n[i];
+          if (n[i] === sel) o.selected = true;
+          s.appendChild(o);
+        }
+      }
+
+      function getCurrentSettings() {
+        const s = {};
+        for (let i = 0; i < PARAM_IDS.length; i++)
+          s[PARAM_IDS[i]] = document.getElementById(PARAM_IDS[i]).value;
+        return s;
+      }
+
+      function applySettings(s) {
+        for (let i = 0; i < PARAM_IDS.length; i++) {
+          const el = document.getElementById(PARAM_IDS[i]);
+          if (s[PARAM_IDS[i]] !== undefined) {
+            el.value = s[PARAM_IDS[i]];
+            el.dispatchEvent(new Event("input"));
+          }
+        }
+      }
+
+      window.savePreset = function () {
+        const n = prompt("Preset name:");
+        if (!n || !n.trim()) return;
+        const name = n.trim();
+        const p = getPresets();
+        p[name] = getCurrentSettings();
+        savePresetsToStorage(p);
+        refreshPresetList(name);
+      };
+
+      window.loadPreset = function () {
+        const n = document.getElementById("presetSelect").value;
+        if (!n) return;
+        const p = getPresets();
+        if (p[n]) applySettings(p[n]);
+      };
+
+      window.deletePreset = function () {
+        const n = document.getElementById("presetSelect").value;
+        if (!n) {
+          alert("Select a preset first.");
+          return;
+        }
+        if (!confirm('Delete "' + n + '"?')) return;
+        const p = getPresets();
+        delete p[n];
+        savePresetsToStorage(p);
+        refreshPresetList("");
+      };
+
+      document
+        .getElementById("presetSelect")
+        .addEventListener("change", loadPreset);
+
+      // Factory presets
+      function initFactoryPresets() {
+        const p = getPresets();
+        const f = {
+          "Electric Piano": {
+            "s-cratio": "1",
+            "s-mratio": "2",
+            "s-midx": "3",
+            "s-mdepth": "1",
+            "s-atk": "0.01",
+            "s-dec": "0.8",
+            "s-sus": "0.3",
+            "s-rel": "0.8",
+            "s-vol": "0.5",
+            "s-pan": "0",
+            "s-lrate": "2",
+            "s-ldepth": "0.5",
+            "s-lvib": "0",
+            "s-rsize": "0.85",
+            "s-rdamp": "0.5",
+            "s-rmix": "0.25",
+            "s-rpre": "0.01",
+            "s-bpm": "120",
+          },
+          "Crystal Bell": {
+            "s-cratio": "1",
+            "s-mratio": "3.5",
+            "s-midx": "4.5",
+            "s-mdepth": "1",
+            "s-atk": "0.001",
+            "s-dec": "0.1",
+            "s-sus": "0.05",
+            "s-rel": "3",
+            "s-vol": "0.45",
+            "s-pan": "0",
+            "s-lrate": "1.5",
+            "s-ldepth": "0",
+            "s-lvib": "0",
+            "s-rsize": "0.92",
+            "s-rdamp": "0.5",
+            "s-rmix": "0.5",
+            "s-rpre": "0.04",
+            "s-bpm": "120",
+          },
+          "Brass Stab": {
+            "s-cratio": "1",
+            "s-mratio": "1.414",
+            "s-midx": "6",
+            "s-mdepth": "1",
+            "s-atk": "0.08",
+            "s-dec": "0.3",
+            "s-sus": "0.6",
+            "s-rel": "0.3",
+            "s-vol": "0.5",
+            "s-pan": "0",
+            "s-lrate": "4",
+            "s-ldepth": "1",
+            "s-lvib": "0",
+            "s-rsize": "0.75",
+            "s-rdamp": "0.5",
+            "s-rmix": "0.15",
+            "s-rpre": "0.01",
+            "s-bpm": "120",
+          },
+          "Warm Pad": {
+            "s-cratio": "1",
+            "s-mratio": "5.19",
+            "s-midx": "1.5",
+            "s-mdepth": "1",
+            "s-atk": "0.5",
+            "s-dec": "0.5",
+            "s-sus": "0.7",
+            "s-rel": "2",
+            "s-vol": "0.5",
+            "s-pan": "0",
+            "s-lrate": "0.5",
+            "s-ldepth": "0.3",
+            "s-lvib": "0",
+            "s-rsize": "0.88",
+            "s-rdamp": "0.5",
+            "s-rmix": "0.4",
+            "s-rpre": "0.05",
+            "s-bpm": "120",
+          },
+          "Metallic Gong": {
+            "s-cratio": "1",
+            "s-mratio": "7.01",
+            "s-midx": "8",
+            "s-mdepth": "1",
+            "s-atk": "0.001",
+            "s-dec": "0.2",
+            "s-sus": "0.1",
+            "s-rel": "4",
+            "s-vol": "0.4",
+            "s-pan": "0",
+            "s-lrate": "3",
+            "s-ldepth": "2",
+            "s-lvib": "0",
+            "s-rsize": "0.9",
+            "s-rdamp": "0.5",
+            "s-rmix": "0.45",
+            "s-rpre": "0.035",
+            "s-bpm": "120",
+          },
+          "FM Bass": {
+            "s-cratio": "0.5",
+            "s-mratio": "2.718",
+            "s-midx": "0.8",
+            "s-mdepth": "1",
+            "s-atk": "0.05",
+            "s-dec": "0.5",
+            "s-sus": "0.8",
+            "s-rel": "1",
+            "s-vol": "0.6",
+            "s-pan": "0",
+            "s-lrate": "2",
+            "s-ldepth": "0.5",
+            "s-lvib": "0",
+            "s-rsize": "0.7",
+            "s-rdamp": "0.5",
+            "s-rmix": "0.1",
+            "s-rpre": "0.01",
+            "s-bpm": "120",
+          },
+          Pluck: {
+            "s-cratio": "1",
+            "s-mratio": "4",
+            "s-midx": "5",
+            "s-mdepth": "1",
+            "s-atk": "0.001",
+            "s-dec": "0.15",
+            "s-sus": "0.05",
+            "s-rel": "0.5",
+            "s-vol": "0.5",
+            "s-pan": "0",
+            "s-lrate": "2",
+            "s-ldepth": "0",
+            "s-lvib": "0",
+            "s-rsize": "0.82",
+            "s-rdamp": "0.5",
+            "s-rmix": "0.3",
+            "s-rpre": "0.015",
+            "s-bpm": "120",
+          },
+          "Alien Voice": {
+            "s-cratio": "1",
+            "s-mratio": "9.37",
+            "s-midx": "3.5",
+            "s-mdepth": "1",
+            "s-atk": "0.001",
+            "s-dec": "0.3",
+            "s-sus": "0.15",
+            "s-rel": "2",
+            "s-vol": "0.4",
+            "s-pan": "0",
+            "s-lrate": "1.5",
+            "s-ldepth": "1.5",
+            "s-lvib": "25",
+            "s-rsize": "0.86",
+            "s-rdamp": "0.5",
+            "s-rmix": "0.35",
+            "s-rpre": "0.045",
+            "s-bpm": "120",
+          },
+        };
+        for (const k in f) {
+          if (!p[k]) p[k] = f[k];
+        }
+        savePresetsToStorage(p);
+        refreshPresetList("");
+      }
+
+      initFactoryPresets();
+
+      // ── Randomize (excludes volume) ────────────────────────────────────────────────
+      window.randomize = function () {
+        document.getElementById("s-cratio").value = (
+          Math.random() * 4 +
+          0.25
+        ).toFixed(2);
+        document.getElementById("s-mratio").value = (
+          Math.random() * 7 +
+          0.25
+        ).toFixed(2);
+        document.getElementById("s-midx").value = (
+          Math.random() * 8 +
+          0.5
+        ).toFixed(1);
+        document.getElementById("s-mdepth").value = (
+          Math.random() * 0.8 +
+          0.2
+        ).toFixed(2);
+        document.getElementById("s-atk").value = (Math.random() * 1.5).toFixed(
+          3,
+        );
+        document.getElementById("s-dec").value = (
+          Math.random() * 2 +
+          0.01
+        ).toFixed(2);
+        document.getElementById("s-sus").value = (
+          Math.random() * 0.9 +
+          0.05
+        ).toFixed(2);
+        document.getElementById("s-rel").value = (
+          Math.random() * 3 +
+          0.1
+        ).toFixed(2);
+        document.getElementById("s-pan").value = (
+          (Math.random() * 2 - 1) *
+          0.8
+        ).toFixed(2);
+        document.getElementById("s-lrate").value = (
+          Math.random() * 8 +
+          0.5
+        ).toFixed(1);
+        document.getElementById("s-ldepth").value = (Math.random() * 3).toFixed(
+          2,
+        );
+        document.getElementById("s-lvib").value = (Math.random() * 50).toFixed(
+          0,
+        );
+        document.getElementById("s-rsize").value = (
+          Math.random() * 0.3 +
+          0.6
+        ).toFixed(2);
+        document.getElementById("s-rdamp").value = (
+          Math.random() * 0.6 +
+          0.2
+        ).toFixed(2);
+        document.getElementById("s-rmix").value = (Math.random() * 0.8).toFixed(
+          2,
+        );
+        document.getElementById("s-rpre").value = (
+          Math.random() * 0.1 +
+          0.001
+        ).toFixed(3);
+
+        // Update all displays (volume NOT randomized)
+        for (const id of Object.keys(CHANNELS)) {
+          const el = document.getElementById("s-" + id);
+          if (el && id !== "vol") el.dispatchEvent(new Event("input"));
+        }
+      };
+
+      // ── Theme Switcher ────────────────────────────────────────────────────────────
+      document.getElementById("themeSelect").addEventListener("change", (e) => {
+        const theme = e.target.value;
+        if (theme === "cyan") {
+          document.body.removeAttribute("data-theme");
+        } else {
+          document.body.setAttribute("data-theme", theme);
+        }
+        localStorage.setItem("fmSynthTheme", theme);
+      });
+
+      // Load saved theme
+      const savedTheme = localStorage.getItem("fmSynthTheme");
+      if (savedTheme) {
+        document.getElementById("themeSelect").value = savedTheme;
+        if (savedTheme !== "cyan") {
+          document.body.setAttribute("data-theme", savedTheme);
+        }
+      }
+
+      // ── LFO Viz ───────────────────────────────────────────────────────────────────
+      function startViz() {
+        const canvas = document.getElementById("viz");
+        const ctx = canvas.getContext("2d");
+        let t = 0;
+
+        function draw() {
+          const W = canvas.offsetWidth,
+            H = canvas.offsetHeight;
+          if (canvas.width !== W || canvas.height !== H) {
+            canvas.width = W;
+            canvas.height = H;
+          }
+          ctx.clearRect(0, 0, W, H);
+
+          const rate = parseFloat(document.getElementById("s-lrate").value);
+          const depth =
+            parseFloat(document.getElementById("s-ldepth").value) / 10;
+
+          const grad = ctx.createLinearGradient(0, 0, W, 0);
+          grad.addColorStop(0, "rgba(0,255,213,0)");
+          grad.addColorStop(0.5, "rgba(0,255,213,0.75)");
+          grad.addColorStop(1, "rgba(0,255,213,0)");
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          for (let x = 0; x < W; x++) {
+            const y =
+              H / 2 -
+              Math.sin((x / W) * Math.PI * 4 + t * rate * 0.2) *
+                (H / 2 - 5) *
+                Math.max(0.05, depth);
+            x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+          t += 0.08;
+          requestAnimationFrame(draw);
+        }
+        draw();
+      }
+
+      // ── UI helper ─────────────────────────────────────────────────────────────────
+      function updateBtn(id, on, label) {
+        const b = document.getElementById(id);
+        b.classList.toggle("on", on);
+        b.textContent = label;
+      }
+    </script>
+  </body>
+</html>

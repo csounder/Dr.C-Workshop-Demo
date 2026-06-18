@@ -69,6 +69,7 @@ Launcher prepends `~/bin` + `~/Applications/Csound` so Csound 7 wins over Homebr
 
 1. **Agent** → **Load workshop FM bell (no key)**
 2. **Player** → **Demos** → FM-Bell · **Web Apps** tab
+3. **Browser gallery:** clone this repo → `cd web-demos && python3 -m http.server 8080` → http://localhost:8080
 
 ## 5. Agent / LLM (optional)
 
