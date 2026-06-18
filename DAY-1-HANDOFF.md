@@ -39,7 +39,7 @@ Day 1 focused on making the **LAC 2026 Csound 7 workshop** demo-ready on Richard
 | 🟢 **Green** | Mac `npm test` | `cd ~/Dr.C-Standalone && npm test` — **126 passed, 0 failed** + build + workshop tests |
 | 🟢 **Green** | Mac Standalone launcher | **Dr.C Mac Standalone** on Desktop opens Pro+ instructor mode |
 | 🟢 **Green** | VM running | `lac-2026-linux` **Running** @ `192.168.252.7` |
-| 🟢 **Green** | Git pushed | Standalone `lac-2026-csound7` @ `68e0373`; Workshop-Demo `main` @ `9289663` (pre–Day-1-handoff commit) |
+| 🟢 **Green** | Git pushed | Standalone `lac-2026-csound7` @ `68e0373`; Workshop-Demo `main` @ `0419515` |
 | 🟢 **Green** | `player-demos/` | FM bell, trumpet, trapped blue/sand CSDs + `manifest.json` + `models/` in Workshop-Demo repo |
 | 🟡 **Yellow** | Manual GUI smoke | **FINAL-TEST-PLAN §A2** (FM bell, Player) and **§A5** (web app clobber regression) — **not yet signed off** |
 | 🟡 **Yellow** | Mac Terminal | Fix landed (`68e0373`); **verify after `git pull`** — double-click **Dr.C Mac Terminal** |
@@ -96,10 +96,11 @@ af52b56 Guard Linux VM launches against Mac node_modules from /mnt mounts.
 |------|-------|
 | Path | `~/Dr.C-Workshop-Demo` |
 | Branch | `main` |
-| **HEAD (before Day-1-handoff commit)** | **`9289663`** |
+| **HEAD (Day 1 handoff)** | **`0419515`** |
 | Remote | `https://github.com/csounder/Dr.C-Workshop-Demo.git` |
 
 ```
+0419515 Add Day 1 handoff doc for university resume.
 9289663 Document Mac-side RDP presenter workflow for Linux Dr.C launches.
 ac0207a Document RDP launchers, audio, Ollama, and API keys for Linux VM.
 01fbd26 Document Workshop-Demo as tracked git repo on GitHub.
