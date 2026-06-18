@@ -41,33 +41,43 @@ Pre-built installers may be added later; for LAC 2026 use **git clone** on `lac-
 | **Dr.C-Standalone.command** | Full Standalone from `~/Dr.C-Standalone` |
 | **Dr.C-Terminal.command** | Dr.C Terminal TUI (project folder = this repo) |
 
+**Mac first launch:** Right-click a `.command` file → **Open** → **Open** (Gatekeeper). If blocked or “damaged”:
+
+```bash
+xattr -cr ~/Dr.C-Workshop-Demo/*.command
+xattr -cr ~/Dr.C-Standalone/launchers/*.command
+chmod +x ~/Dr.C-Standalone/launchers/*.command
+```
+
+For a packaged app: `xattr -cr /Applications/DrC.app`
+
 Linux: run `./launch-drc-attendee.sh` (or `launch-drc-standalone.sh` / `launch-drc-terminal.sh`) from this folder.
 
 ---
 
 ## Web demos
 
-Ten browser Web Apps in **`web-demos/`**. Run the gallery locally:
+After cloning this repo, run the browser gallery from `~/Dr.C-Workshop-Demo/web-demos` (or `./web-demos` from the clone root):
 
 ```bash
-cd web-demos
+cd ~/Dr.C-Workshop-Demo/web-demos
 python3 -m http.server 8080
 ```
 
-Open **http://localhost:8080**. Click **Start Audio** in each app; **internet required** for Csound WASM (CDN). See [web-demos/README.md](./web-demos/README.md) for per-demo notes.
+Then open **http://localhost:8080**
 
-| Folder | Description |
-|--------|-------------|
-| `Dr.C-Etude1` | Generative audio-visual etude |
-| `Dr.C-Weather_Sonification` | Live weather → sound |
-| `Dr.C-DrumMachine` | Drum machine / sequencer |
-| `Dr.C-StarChart_Sonification` | Night sky → sound |
-| `Dr.C-Fractal_Explorer-L_Systems` | L-system fractal explorer |
-| `Dr.C-Mandelbrot_Explorer` | Mandelbrot set sonification |
-| `Dr.C-FM_Explorer-Fibonacci_Version` | Fibonacci FM synthesis explorer |
-| `Dr.C-FM_Simple` | Simple FM synth with presets |
-| `Dr.C-FM_Synth` | FM synth with waveform/FFT display |
-| `Dr.C_Fibonacci_Pads` | Fibonacci pad synthesizer |
+1. Dr.C-Etude1
+2. Dr.C-Weather_Sonification
+3. Dr.C-DrumMachine
+4. Dr.C-StarChart_Sonification
+5. Dr.C-Fractal_Explorer-L_Systems
+6. Dr.C-Mandelbrot_Explorer
+7. Dr.C-FM_Explorer-Fibonacci_Version
+8. Dr.C-FM_Simple
+9. Dr.C-FM_Synth
+10. Dr.C_Fibonacci_Pads
+
+Click **Start Audio** in each app. Internet required for Csound WASM CDN. Details: [web-demos/README.md](./web-demos/README.md)
 
 ---
 

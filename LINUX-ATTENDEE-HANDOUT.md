@@ -65,9 +65,14 @@ Launcher prepends `~/bin` + `~/Applications/Csound` so Csound 7 wins over system
 
 1. **Agent** → **Load workshop FM bell (no key)**
 2. **Player** → **Demos** → FM-Bell · **Web Apps** tab
-3. **Browser gallery:** clone [Dr.C-Workshop-Demo](https://github.com/csounder/Dr.C-Workshop-Demo) → `cd web-demos && python3 -m http.server 8080` → http://localhost:8080
+3. **Browser gallery** — clone [Dr.C-Workshop-Demo](https://github.com/csounder/Dr.C-Workshop-Demo), then:
 
-   Ten demos: `Dr.C-Etude1` · `Dr.C-Weather_Sonification` · `Dr.C-DrumMachine` · `Dr.C-StarChart_Sonification` · `Dr.C-Fractal_Explorer-L_Systems` · `Dr.C-Mandelbrot_Explorer` · `Dr.C-FM_Explorer-Fibonacci_Version` · `Dr.C-FM_Simple` · `Dr.C-FM_Synth` · `Dr.C_Fibonacci_Pads`
+```bash
+cd ~/Dr.C-Workshop-Demo/web-demos
+python3 -m http.server 8080
+```
+
+Open **http://localhost:8080** — ten demos: Dr.C-Etude1 · Dr.C-Weather_Sonification · Dr.C-DrumMachine · Dr.C-StarChart_Sonification · Dr.C-Fractal_Explorer-L_Systems · Dr.C-Mandelbrot_Explorer · Dr.C-FM_Explorer-Fibonacci_Version · Dr.C-FM_Simple · Dr.C-FM_Synth · Dr.C_Fibonacci_Pads
 
 ## 5. Agent / LLM (optional)
 

@@ -57,6 +57,14 @@ Pre-built installers may be added later; for LAC 2026 use **git clone** on `lac-
 
 **Double-click:** `~/Dr.C-Standalone/launchers/Dr.C-Workshop-Attendee.command`
 
+**First launch (Mac):** Right-click the `.command` file → **Open** → **Open** (Gatekeeper). If blocked or “damaged”:
+
+```bash
+xattr -cr ~/Dr.C-Standalone/launchers/*.command
+xattr -cr ~/Dr.C-Workshop-Demo/*.command
+chmod +x ~/Dr.C-Standalone/launchers/*.command
+```
+
 Or in Terminal:
 
 ```bash
@@ -69,9 +77,14 @@ Launcher prepends `~/bin` + `~/Applications/Csound` so Csound 7 wins over Homebr
 
 1. **Agent** → **Load workshop FM bell (no key)**
 2. **Player** → **Demos** → FM-Bell · **Web Apps** tab
-3. **Browser gallery:** clone [Dr.C-Workshop-Demo](https://github.com/csounder/Dr.C-Workshop-Demo) → `cd web-demos && python3 -m http.server 8080` → http://localhost:8080
+3. **Browser gallery** — clone [Dr.C-Workshop-Demo](https://github.com/csounder/Dr.C-Workshop-Demo), then:
 
-   Ten demos: `Dr.C-Etude1` · `Dr.C-Weather_Sonification` · `Dr.C-DrumMachine` · `Dr.C-StarChart_Sonification` · `Dr.C-Fractal_Explorer-L_Systems` · `Dr.C-Mandelbrot_Explorer` · `Dr.C-FM_Explorer-Fibonacci_Version` · `Dr.C-FM_Simple` · `Dr.C-FM_Synth` · `Dr.C_Fibonacci_Pads`
+```bash
+cd ~/Dr.C-Workshop-Demo/web-demos
+python3 -m http.server 8080
+```
+
+Open **http://localhost:8080** — ten demos: Dr.C-Etude1 · Dr.C-Weather_Sonification · Dr.C-DrumMachine · Dr.C-StarChart_Sonification · Dr.C-Fractal_Explorer-L_Systems · Dr.C-Mandelbrot_Explorer · Dr.C-FM_Explorer-Fibonacci_Version · Dr.C-FM_Simple · Dr.C-FM_Synth · Dr.C_Fibonacci_Pads
 
 ## 5. Agent / LLM (optional)
 
@@ -107,7 +120,8 @@ Expected: platform checks + **126 passed, 0 failed** (smoke) + build + `Workshop
 | Problem | Fix |
 |---------|-----|
 | `csound not found` / brew 6.x | Csound 7 in `~/Applications/Csound`; use launcher |
-| "App is damaged" / Gatekeeper | Right-click → Open, or `xattr -cr DrC.app` |
+| `.command` blocked / “damaged” | Right-click → **Open** → **Open**; or §3 `xattr -cr` + `chmod +x` |
+| DrC.app “damaged” / Gatekeeper | Right-click → **Open** → **Open**; or `xattr -cr /Applications/DrC.app` |
 | Blank screen after Send | Quit + relaunch (stale port 5173) |
 | `npm install` fails | Node 22; `npx electron-builder install-app-deps` |
 | Agent weak | **Load workshop FM bell (no key)** or Ollama/API key |

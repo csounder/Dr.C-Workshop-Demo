@@ -1,15 +1,26 @@
 # Dr.C Web App Demos (Workshop Snapshots)
 
-Static browser demos bundled for LAC 2026 workshop attendees. Each folder is a self-contained snapshot exported from **Dr.C Standalone → Convert to Web App**.
-
-## Run locally
+After cloning the workshop repo, run from `~/Dr.C-Workshop-Demo/web-demos` (or `./web-demos` from the clone root):
 
 ```bash
-cd web-demos
+cd ~/Dr.C-Workshop-Demo/web-demos
 python3 -m http.server 8080
 ```
 
-Open **http://localhost:8080** for the gallery, or open any demo folder directly.
+Then open **http://localhost:8080**
+
+1. Dr.C-Etude1
+2. Dr.C-Weather_Sonification
+3. Dr.C-DrumMachine
+4. Dr.C-StarChart_Sonification
+5. Dr.C-Fractal_Explorer-L_Systems
+6. Dr.C-Mandelbrot_Explorer
+7. Dr.C-FM_Explorer-Fibonacci_Version
+8. Dr.C-FM_Simple
+9. Dr.C-FM_Synth
+10. Dr.C_Fibonacci_Pads
+
+Static browser demos bundled for LAC 2026 workshop attendees. Each folder is a self-contained snapshot exported from **Dr.C Standalone → Convert to Web App**. Open any demo folder directly, or use the gallery index at http://localhost:8080.
 
 ## Before you play
 

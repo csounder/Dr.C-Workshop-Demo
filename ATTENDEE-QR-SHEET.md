@@ -58,6 +58,6 @@ git clone -b lac-2026-csound7 https://github.com/csounder/DRC-Standalone.git ~/D
 
 **Offline demo (no key):** Agent → **Load workshop FM bell (no key)** · Player → **Demos** → FM-Bell
 
-**Web demos:** `web-demos/` gallery — `cd web-demos && python3 -m http.server 8080` → ten browser apps (`Dr.C-Etude1` … `Dr.C_Fibonacci_Pads`; see [web-demos/README.md](https://github.com/csounder/Dr.C-Workshop-Demo/blob/main/web-demos/README.md))
+**Web demos:** `cd ~/Dr.C-Workshop-Demo/web-demos && python3 -m http.server 8080` → http://localhost:8080
 
 *LAC 2026 · Dr.C Standalone · Richard Boulanger*
