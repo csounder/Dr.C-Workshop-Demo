@@ -70,9 +70,18 @@ Launcher prepends `~/bin` + `~/Applications/Csound` so Csound 7 wins over Homebr
 1. **Agent** → **Load workshop FM bell (no key)**
 2. **Player** → **Demos** → FM-Bell · **Web Apps** tab
 
-## 5. Agent model (optional)
+## 5. Agent / LLM (optional)
 
-OpenRouter [openrouter.ai/keys](https://openrouter.ai/keys) · Ollama `ollama pull qwen2.5-coder:7b` → Settings → Use local LLM · Groq/Gemini free = backup only
+| Option | Type | Setup |
+|--------|------|-------|
+| **Ollama** (best free) | Local | [ollama.com/download](https://ollama.com/download) → `ollama pull qwen2.5-coder:7b` → Settings → **Local LLM server** → **Use local LLM for Agent** → **Test** |
+| Groq | Cloud free | [console.groq.com/keys](https://console.groq.com/keys) → Settings → paste key (rate limits) |
+| Gemini | Cloud free | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) → Settings → paste key (backup when Groq throttles) |
+| OpenRouter | Cloud | [openrouter.ai/keys](https://openrouter.ai/keys) — best quality with credits; free slugs at [openrouter.ai/models?max_price=0](https://openrouter.ai/models?max_price=0) |
+
+**No key:** Agent → **Load workshop FM bell (no key)** · Player demos · Web Apps. Full guide: `~/Dr.C-Standalone/LOCAL-LLM.md`
+
+**Dr.C Terminal only:** [opencode.ai/zen](https://opencode.ai/docs/zen/) free models via `/connect` — not wired into Standalone GUI.
 
 ## 6. Verify before class
 
