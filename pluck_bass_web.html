@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FM Pluck Bass - Csound Web Instrument</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  color: #e0e0e0;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+}
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+h1 {
+  text-align: center;
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.card {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 1.5rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.status-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.status {
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.3);
+  flex: 1;
+  min-width: 200px;
+}
+.status.ready { color: #4ade80; }
+.status.error { color: #ef4444; }
+.start-btn {
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.2s;
+}
+.start-btn:hover { transform: translateY(-2px); }
+.start-btn:active { transform: translateY(0); }
+.start-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.midi-info {
+  font-size: 0.85rem;
+  color: #888;
+  text-align: center;
+  font-style: italic;
+}
+.keyboard-container {
+  position: relative;
+  height: 160px;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.keyboard {
+  display: flex;
+  position: relative;
+  height: 100%;
+  padding: 10px;
+}
+.key-white {
+  flex: 1;
+  background: linear-gradient(180deg, #fafafa 0%, #e0e0e0 100%);
+  border-right: 2px solid #1a1a2e;
+  border-radius: 0 0 6px 6px;
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+  transition: all 0.05s;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+.key-white:hover { background: linear-gradient(180deg, #fff 0%, #f0f0f0 100%); }
+.key-white:active, .key-white.active {
+  background: linear-gradient(180deg, #c0c0ff 0%, #a0a0ff 100%);
+  transform: translateY(2px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+.key-white .note-label {
+  position: absolute;
+  bottom: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  color: #666;
+  font-weight: 600;
+  pointer-events: none;
+}
+.key-black {
+  width: 7%;
+  height: 65%;
+  background: linear-gradient(180deg, #2a2a2a 0%, #1a1a1a 100%);
+  position: absolute;
+  z-index: 2;
+  cursor: pointer;
+  border-radius: 0 0 4px 4px;
+  transition: all 0.05s;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.5);
+}
+.key-black:hover { background: linear-gradient(180deg, #3a3a3a 0%, #2a2a2a 100%); }
+.key-black:active, .key-black.active {
+  background: linear-gradient(180deg, #555 0%, #444 100%);
+  transform: translateY(2px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+.controls-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 1.25rem;
+}
+.knob {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+.knob-label {
+  font-size: 0.75rem;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+.knob-value {
+  font-size: 0.85rem;
+  font-family: 'SF Mono', 'Monaco', monospace;
+  color: #667eea;
+  font-weight: 600;
+  min-width: 60px;
+  text-align: center;
+}
+input[type="range"] {
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.1);
+  outline: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  cursor: pointer;
+  border: none;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+.section-title {
+  font-size: 0.9rem;
+  color: #667eea;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.5rem;
+}
+.hidden { display: none; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🎹 FM Pluck Bass</h1>
+  
+  <div class="card">
+    <div class="status-bar">
+      <div class="status" id="status">Ready to start</div>
+      <button class="start-btn" id="startBtn">Start Instrument</button>
+    </div>
+  </div>
+  
+  <div class="midi-info" id="midiInfo">Click Start to initialize Csound and enable MIDI</div>
+  
+  <div class="card hidden" id="uiContainer">
+    <div class="section-title">On-Screen Keyboard</div>
+    <div class="keyboard-container">
+      <div class="keyboard" id="keyboard"></div>
+    </div>
+  </div>
+  
+  <div class="card hidden" id="controlsContainer">
+    <div class="section-title">Synthesis Controls</div>
+    <div class="controls-grid">
+      <div class="knob">
+        <span class="knob-label">Mod Index</span>
+        <input type="range" id="modIndex" min="0" max="16" step="0.1" value="8">
+        <span class="knob-value" id="modIndexVal">8.0</span>
+      </div>
+      <div class="knob">
+        <span class="knob-label">Mod Ratio</span>
+        <input type="range" id="modRatio" min="0.5" max="4" step="0.01" value="2.01">
+        <span class="knob-value" id="modRatioVal">2.01</span>
+      </div>
+      <div class="knob">
+        <span class="knob-label">Brightness</span>
+        <input type="range" id="filterMult" min="1" max="12" step="0.1" value="6">
+        <span class="knob-value" id="filterMultVal">6.0</span>
+      </div>
+      <div class="knob">
+        <span class="knob-label">Attack</span>
+        <input type="range" id="attack" min="0.0001" max="0.01" step="0.0001" value="0.001">
+        <span class="knob-value" id="attackVal">0.001</span>
+      </div>
+      <div class="knob">
+        <span class="knob-label">Decay</span>
+        <input type="range" id="decay" min="0.05" max="1" step="0.01" value="0.2">
+        <span class="knob-value" id="decayVal">0.20</span>
+      </div>
+      <div class="knob">
+        <span class="knob-label">Sustain</span>
+        <input type="range" id="sustain" min="0" max="1" step="0.01" value="0">
+        <span class="knob-value" id="sustainVal">0.00</span>
+      </div>
+    </div>
+    
+    <div class="section-title" style="margin-top: 1.5rem;">Echo Effect</div>
+    <div class="controls-grid">
+      <div class="knob">
+        <span class="knob-label">FX Send</span>
+        <input type="range" id="echoSend" min="0" max="1" step="0.01" value="0.4">
+        <span class="knob-value" id="echoSendVal">0.40</span>
+      </div>
+      <div class="knob">
+        <span class="knob-label">Time L (ms)</span>
+        <input type="range" id="delTimeL" min="50" max="800" step="1" value="280">
+        <span class="knob-value" id="delTimeLVal">280</span>
+      </div>
+      <div class="knob">
+        <span class="knob-label">Time R (ms)</span>
+        <input type="range" id="delTimeR" min="50" max="800" step="1" value="420">
+        <span class="knob-value" id="delTimeRVal">420</span>
+      </div>
+      <div class="knob">
+        <span class="knob-label">Feedback L</span>
+        <input type="range" id="feedbackL" min="0" max="0.8" step="0.01" value="0.38">
+        <span class="knob-value" id="feedbackLVal">0.38</span>
+      </div>
+      <div class="knob">
+        <span class="knob-label">Feedback R</span>
+        <input type="range" id="feedbackR" min="0" max="0.8" step="0.01" value="0.4">
+        <span class="knob-value" id="feedbackRVal">0.40</span>
+      </div>
+      <div class="knob">
+        <span class="knob-label">Dry/Wet</span>
+        <input type="range" id="dryWet" min="0" max="1" step="0.01" value="0.6">
+        <span class="knob-value" id="dryWetVal">0.60</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { Csound } from 'https://unpkg.com/@csound/browser@7.0.0-beta31/dist/index.js';
+
+const CSD = `<CsoundSynthesizer>
+<CsOptions>
+-odac -d -m0
+</CsOptions>
+<CsInstruments>
+sr = 44100
+ksmps = 32
+nchnls = 2
+0dbfs = 1
+
+gaEcho init 0
+
+instr 1
+iFreq = p4
+iVel = p5
+
+kModIndex chnget "modIndex"
+kModIndex port kModIndex, 0.05
+kModRatio chnget "modRatio"
+kModRatio port kModRatio, 0.05
+kFilterMult chnget "filterMult"
+kFilterMult port kFilterMult, 0.05
+kEchoSend chnget "echoSend"
+kEchoSend port kEchoSend, 0.05
+iAttack chnget "attack"
+iDecay chnget "decay"
+iSustain chnget "sustain"
+
+iAmp = 0.6 * iVel
+
+kCarEnv = linsegr(0, iAttack, 1, iDecay, iSustain, 0.1, 0)
+kModEnv = expsegr(1, iAttack*0.5, 0.3, iDecay*0.4, 0.01, 0.1, 0.0001)
+kModIdx = kModEnv * kModIndex
+aFM = foscili(kCarEnv * iAmp, iFreq, 1, kModRatio, kModIdx, 1)
+aFat = butterlp(aFM, iFreq*kFilterMult)
+
+gaEcho += aFat * kEchoSend
+out aFat, aFat
+endin
+
+instr 99
+kDelTimeL chnget "delTimeL"
+kDelTimeL port kDelTimeL, 0.05
+kDelTimeR chnget "delTimeR"
+kDelTimeR port kDelTimeR, 0.05
+kFeedbackL chnget "feedbackL"
+kFeedbackL port kFeedbackL, 0.05
+kFeedbackR chnget "feedbackR"
+kFeedbackR port kFeedbackR, 0.05
+kDryWet chnget "dryWet"
+kDryWet port kDryWet, 0.05
+
+aDelL = vdelay3(gaEcho, kDelTimeL, 1000)
+aDelR = vdelay3(gaEcho, kDelTimeR, 1000)
+aFbL = vdelay3(aDelR*kFeedbackL, kDelTimeL, 1000)
+aFbR = vdelay3(aDelL*kFeedbackR, kDelTimeR, 1000)
+aEchoL = gaEcho*(1-kDryWet) + (aDelL + aFbL)*kDryWet
+aEchoR = gaEcho*(1-kDryWet) + (aDelR + aFbR)*kDryWet
+out aEchoL, aEchoR
+clear gaEcho
+endin
+
+</CsInstruments>
+<CsScore>
+f 1 0 16384 10 1
+i 99 0 86400
+e
+</CsScore>
+</CsoundSynthesizer>`;
+
+let csound = null;
+let midiAccess = null;
+let activeNotes = new Map();
+
+function log(msg) {
+  console.log(msg);
+  document.getElementById('status').textContent = msg;
+}
+
+function mtof(note) {
+  return 440 * Math.pow(2, (note - 69) / 12);
+}
+
+async function initCsound() {
+  try {
+    log('Initializing Csound...');
+    csound = await Csound();
+    
+    log('Compiling CSD...');
+    await csound.compileCsd(CSD);
+    
+    log('Starting Csound audio...');
+    await csound.start();
+    
+    // Set initial channel values
+    await csound.setControlChannel('modIndex', 8);
+    await csound.setControlChannel('modRatio', 2.01);
+    await csound.setControlChannel('filterMult', 6);
+    await csound.setControlChannel('echoSend', 0.4);
+    await csound.setControlChannel('attack', 0.001);
+    await csound.setControlChannel('decay', 0.2);
+    await csound.setControlChannel('sustain', 0);
+    await csound.setControlChannel('delTimeL', 280);
+    await csound.setControlChannel('delTimeR', 420);
+    await csound.setControlChannel('feedbackL', 0.38);
+    await csound.setControlChannel('feedbackR', 0.4);
+    await csound.setControlChannel('dryWet', 0.6);
+    
+    log('✓ Csound ready - requesting MIDI access...');
+    
+    // Now request MIDI
+    await initMIDI();
+    
+    // Show UI
+    document.getElementById('uiContainer').classList.remove('hidden');
+    document.getElementById('controlsContainer').classList.remove('hidden');
+    
+    log('✓ Ready! Play using keyboard or MIDI controller');
+    document.getElementById('status').classList.add('ready');
+    
+    return true;
+  } catch (err) {
+    log('ERROR: ' + err.message);
+    document.getElementById('status').classList.add('error');
+    console.error(err);
+    return false;
+  }
+}
+
+async function initMIDI() {
+  try {
+    // This will prompt user for MIDI permission
+    midiAccess = await navigator.requestMIDIAccess();
+    
+    let deviceCount = 0;
+    for (const input of midiAccess.inputs.values()) {
+      console.log('MIDI Input:', input.name);
+      input.onmidimessage = handleMIDI;
+      deviceCount++;
+    }
+    
+    if (deviceCount > 0) {
+      document.getElementById('midiInfo').textContent = 
+        `✓ MIDI: ${deviceCount} device(s) connected and ready`;
+      document.getElementById('midiInfo').style.color = '#4ade80';
+    } else {
+      document.getElementById('midiInfo').textContent = 
+        'No USB MIDI devices found - use on-screen keyboard';
+      document.getElementById('midiInfo').style.color = '#888';
+    }
+    
+    midiAccess.onstatechange = (e) => {
+      console.log('MIDI state change:', e.port.name, e.port.state);
+      if (e.port.type === 'input' && e.port.state === 'connected') {
+        e.port.onmidimessage = handleMIDI;
+      }
+    };
+  } catch (err) {
+    console.warn('MIDI access denied or unavailable:', err);
+    document.getElementById('midiInfo').textContent = 
+      'MIDI access denied - use on-screen keyboard only';
+    document.getElementById('midiInfo').style.color = '#ef4444';
+  }
+}
+
+function handleMIDI(event) {
+  const [status, note, velocity] = event.data;
+  const cmd = status >> 4;
+  
+  console.log('MIDI:', cmd === 9 ? 'NoteOn' : 'NoteOff', note, velocity);
+  
+  if (cmd === 9 && velocity > 0) { // Note On
+    playNote(note, velocity / 127);
+  } else if (cmd === 8 || (cmd === 9 && velocity === 0)) { // Note Off
+    stopNote(note);
+  }
+}
+
+function playNote(midiNote, velocity = 0.8) {
+  if (!csound || activeNotes.has(midiNote)) return;
+  
+  const freq = mtof(midiNote);
+  console.log('Playing note:', midiNote, 'freq:', freq, 'vel:', velocity);
+  
+  csound.inputMessage(`i 1 0 -1 ${freq} ${velocity}`);
+  activeNotes.set(midiNote, true);
+  
+  const key = document.querySelector(`[data-note="${midiNote}"]`);
+  if (key) key.classList.add('active');
+}
+
+function stopNote(midiNote) {
+  if (!csound || !activeNotes.has(midiNote)) return;
+  
+  console.log('Stopping note:', midiNote);
+  csound.inputMessage(`i -1 0 0 ${mtof(midiNote)}`);
+  activeNotes.delete(midiNote);
+  
+  const key = document.querySelector(`[data-note="${midiNote}"]`);
+  if (key) key.classList.remove('active');
+}
+
+function buildKeyboard() {
+  const keyboard = document.getElementById('keyboard');
+  const whiteNotes = [48, 50, 52, 53, 55, 57, 59, 60, 62, 64, 65, 67, 69, 71, 72];
+  const blackNotes = [49, 51, 54, 56, 58, 61, 63, 66, 68, 70];
+  const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+  const octaves = [3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 5];
+  
+  whiteNotes.forEach((note, i) => {
+    const key = document.createElement('div');
+    key.className = 'key-white';
+    key.dataset.note = note;
+    
+    const label = document.createElement('span');
+    label.className = 'note-label';
+    label.textContent = noteNames[note % 12] + octaves[i];
+    key.appendChild(label);
+    
+    key.addEventListener('mousedown', () => playNote(note, 0.8));
+    key.addEventListener('mouseup', () => stopNote(note));
+    key.addEventListener('mouseleave', () => stopNote(note));
+    key.addEventListener('touchstart', (e) => { e.preventDefault(); playNote(note, 0.8); });
+    key.addEventListener('touchend', (e) => { e.preventDefault(); stopNote(note); });
+    
+    keyboard.appendChild(key);
+  });
+  
+  const blackPositions = [6.5, 13, 26.5, 33, 39.5, 56.5, 63, 76.5, 83, 89.5];
+  blackNotes.forEach((note, i) => {
+    const key = document.createElement('div');
+    key.className = 'key-black';
+    key.dataset.note = note;
+    key.style.left = `calc(${blackPositions[i]}% - 10px)`;
+    
+    key.addEventListener('mousedown', (e) => { e.stopPropagation(); playNote(note, 0.9); });
+    key.addEventListener('mouseup', (e) => { e.stopPropagation(); stopNote(note); });
+    key.addEventListener('mouseleave', () => stopNote(note));
+    key.addEventListener('touchstart', (e) => { e.preventDefault(); e.stopPropagation(); playNote(note, 0.9); });
+    key.addEventListener('touchend', (e) => { e.preventDefault(); e.stopPropagation(); stopNote(note); });
+    
+    keyboard.appendChild(key);
+  });
+}
+
+function setupControls() {
+  const params = [
+    'modIndex', 'modRatio', 'filterMult', 'echoSend',
+    'delTimeL', 'delTimeR', 'attack', 'decay', 'sustain',
+    'feedbackL', 'feedbackR', 'dryWet'
+  ];
+  
+  params.forEach(param => {
+    const slider = document.getElementById(param);
+    const display = document.getElementById(param + 'Val');
+    
+    slider.addEventListener('input', (e) => {
+      const val = parseFloat(e.target.value);
+      const decimals = ['delTimeL', 'delTimeR'].includes(param) ? 0 : 
+                      param === 'attack' ? 4 : 2;
+      display.textContent = val.toFixed(decimals);
+      
+      if (csound) {
+        csound.setControlChannel(param, val);
+      }
+    });
+  });
+}
+
+document.getElementById('startBtn').addEventListener('click', async () => {
+  const btn = document.getElementById('startBtn');
+  btn.disabled = true;
+  btn.textContent = 'Starting...';
+  
+  const success = await initCsound();
+  
+  if (success) {
+    btn.style.display = 'none';
+  } else {
+    btn.disabled = false;
+    btn.textContent = 'Retry';
+  }
+});
+
+buildKeyboard();
+setupControls();
+</script>
+</body>
+</html>
