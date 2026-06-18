@@ -1,7 +1,7 @@
 # LAC 2026 — Dr.C Standalone (Mac attendee)
 
 **Your laptop** · branch **`lac-2026-csound7`** · min commit **`68e0373`** · v1.3.1  
-Repo: https://github.com/csounder/DRC-Standalone · Releases: https://github.com/csounder/DRC-Standalone (main only — **use git clone for workshop**)
+Repo: https://github.com/csounder/DRC-Standalone · Releases (optional, older): https://github.com/mateolarreaferro/DRC-Standalone/releases
 
 > **No API key required** for offline demos (FM bell, Player, Web Apps).
 
@@ -39,7 +39,7 @@ cd ~/Dr.C-Standalone && git pull && npm install && chmod +x launchers/*.command 
 cp .env.example .env   # optional
 ```
 
-**Optional — DMG (older main-branch build, not workshop):** `DrC-*-arm64.dmg` or `DrC-*-x64.dmg` from [Releases](https://github.com/csounder/DRC-Standalone) → drag **DrC** to **Applications**. First launch: **Right-click → Open → Open**, or `xattr -cr /Applications/DrC.app`
+**Optional — DMG (older main-branch build, not workshop):** `DrC-*-arm64.dmg` or `DrC-*-x64.dmg` from [Releases](https://github.com/mateolarreaferro/DRC-Standalone/releases) → drag **DrC** to **Applications**. First launch: **Right-click → Open → Open**, or `xattr -cr /Applications/DrC.app`
 
 ## 3. Launch (attendees)
 

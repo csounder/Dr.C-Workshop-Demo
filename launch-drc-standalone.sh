@@ -17,7 +17,7 @@ die() {
 [[ -d "$DRC_ROOT" ]] || die "Dr.C Standalone not found at $DRC_ROOT
 
 Clone workshop build:
-  git clone -b lac-2026-csound7 https://github.com/mateolarreaferro/DRC-Standalone.git ~/Dr.C-Standalone
+  git clone -b lac-2026-csound7 https://github.com/csounder/DRC-Standalone ~/Dr.C-Standalone
   cd ~/Dr.C-Standalone
   npm install && cp .env.example .env"
 
