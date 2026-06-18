@@ -29,7 +29,7 @@ git clone -b lac-2026-csound7 https://github.com/csounder/DRC-Standalone.git ~/D
 cd ~/Dr.C-Standalone && npm install
 ```
 
-Releases: https://github.com/csounder/DRC-Standalone/releases
+Pre-built installers may be added later; for LAC 2026 use **git clone** on `lac-2026-csound7`.
 
 ---
 

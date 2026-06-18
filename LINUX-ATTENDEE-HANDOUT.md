@@ -51,6 +51,8 @@ cp .env.example .env   # optional
 
 Electron deps: `sudo apt install -y libnss3 libatk-bridge2.0-0 libgtk-3-0 libxss1 libasound2`
 
+Pre-built installers may be added later; for LAC 2026 use **git clone** on `lac-2026-csound7`.
+
 ## 3. Launch (attendees)
 
 ```bash

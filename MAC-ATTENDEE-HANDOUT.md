@@ -1,7 +1,7 @@
 # LAC 2026 — Dr.C Standalone (Mac attendee)
 
 **Your laptop** · branch **`lac-2026-csound7`** · min commit **`68e0373`** · v1.3.1  
-Repo: https://github.com/csounder/DRC-Standalone · Releases: https://github.com/csounder/DRC-Standalone/releases
+Repo: https://github.com/csounder/DRC-Standalone
 
 > **No API key required** for offline demos (FM bell, Player, Web Apps).
 
@@ -41,7 +41,7 @@ Install **after Csound 7**. In Dr.C: **Settings → CsoundQt** / **Settings → 
 
 **Optional:** [Audacity](https://www.audacityteam.org/) (`brew install --cask audacity`) · [Reaper](https://www.reaper.fm/download.php) (ARM64 or x64 Mac build)
 
-## 2. Get Dr.C — git clone (recommended)
+## 2. Get Dr.C — git clone
 
 **Git clone** (workshop build on `lac-2026-csound7`):
 
@@ -51,7 +51,7 @@ cd ~/Dr.C-Standalone && git pull && npm install && chmod +x launchers/*.command 
 cp .env.example .env   # optional
 ```
 
-**Optional — DMG:** if a release is posted on [csounder/DRC-Standalone Releases](https://github.com/csounder/DRC-Standalone/releases), use `DrC-*-arm64.dmg` or `DrC-*-x64.dmg` → drag **DrC** to **Applications**. First launch: **Right-click → Open → Open**, or `xattr -cr /Applications/DrC.app`. **Workshop build:** prefer **git clone** above.
+Pre-built installers may be added later; for LAC 2026 use **git clone** on `lac-2026-csound7`.
 
 ## 3. Launch (attendees)
 

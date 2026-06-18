@@ -20,7 +20,7 @@
 
 **Handout:** [MAC-ATTENDEE-HANDOUT.md](https://github.com/csounder/Dr.C-Workshop-Demo/blob/main/MAC-ATTENDEE-HANDOUT.md)
 
-**App repo:** [csounder/DRC-Standalone](https://github.com/csounder/DRC-Standalone) (`lac-2026-csound7`) · [Releases](https://github.com/csounder/DRC-Standalone/releases)
+**App repo:** [csounder/DRC-Standalone](https://github.com/csounder/DRC-Standalone) (`lac-2026-csound7`)
 
 </td>
 <td width="50%" valign="top">
@@ -39,7 +39,7 @@
 
 **Handout:** [LINUX-ATTENDEE-HANDOUT.md](https://github.com/csounder/Dr.C-Workshop-Demo/blob/main/LINUX-ATTENDEE-HANDOUT.md)
 
-**App repo:** [csounder/DRC-Standalone](https://github.com/csounder/DRC-Standalone) (`lac-2026-csound7`) · [Releases](https://github.com/csounder/DRC-Standalone/releases)
+**App repo:** [csounder/DRC-Standalone](https://github.com/csounder/DRC-Standalone) (`lac-2026-csound7`)
 
 </td>
 </tr>
