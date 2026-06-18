@@ -21,6 +21,12 @@ Or from Terminal on the Mac:
 
 **Order matters:** connect RDP first, then run a Launch command. The scripts detect `/tmp/.X11-unix/X*` (prefers `:10+` for xrdp).
 
+## Presenter workflow (recommended)
+
+1. On the Mac, open **a-Dr.C Linux Desktop** (or `open-linux-desktop.sh`), then connect **Windows App** RDP to the VM.
+2. After the XFCE desktop is visible in RDP, double-click **Dr.C Linux Standalone Launch.command** or **Dr.C Linux Terminal Launch.command** on the **Mac Desktop** — not the `.desktop` icons inside the VM.
+3. Mac-side launchers are more reliable for workshops: fewer trackpad quirks in RDP, no “untrusted desktop file” prompts, and the same scripts as Terminal (`launch-linux-*-rdp.sh`).
+
 ## First-time VM setup
 
 If RDP does not connect, install/configure the desktop on the VM:
