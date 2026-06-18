@@ -1,7 +1,7 @@
 # LAC 2026 — Dr.C Standalone (Mac attendee)
 
 **Your laptop** · branch **`lac-2026-csound7`** · min commit **`68e0373`** · v1.3.1  
-Repo: https://github.com/csounder/DRC-Standalone · Releases (optional, older): https://github.com/mateolarreaferro/DRC-Standalone/releases
+Repo: https://github.com/csounder/DRC-Standalone · Releases: https://github.com/csounder/DRC-Standalone/releases
 
 > **No API key required** for offline demos (FM bell, Player, Web Apps).
 
@@ -34,12 +34,12 @@ If Homebrew Csound 6 shadows CS7: `brew unlink csound`
 **Git clone** (workshop build on `lac-2026-csound7`):
 
 ```bash
-git clone -b lac-2026-csound7 https://github.com/csounder/DRC-Standalone ~/Dr.C-Standalone
+git clone -b lac-2026-csound7 https://github.com/csounder/DRC-Standalone.git ~/Dr.C-Standalone
 cd ~/Dr.C-Standalone && git pull && npm install && chmod +x launchers/*.command scripts/*.sh
 cp .env.example .env   # optional
 ```
 
-**Optional — DMG (older main-branch build, not workshop):** `DrC-*-arm64.dmg` or `DrC-*-x64.dmg` from [Releases](https://github.com/mateolarreaferro/DRC-Standalone/releases) → drag **DrC** to **Applications**. First launch: **Right-click → Open → Open**, or `xattr -cr /Applications/DrC.app`
+**Optional — DMG:** if a release is posted on [csounder/DRC-Standalone Releases](https://github.com/csounder/DRC-Standalone/releases), use `DrC-*-arm64.dmg` or `DrC-*-x64.dmg` → drag **DrC** to **Applications**. First launch: **Right-click → Open → Open**, or `xattr -cr /Applications/DrC.app`. **Workshop build:** prefer **git clone** above.
 
 ## 3. Launch (attendees)
 

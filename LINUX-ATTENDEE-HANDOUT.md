@@ -32,7 +32,7 @@ mkdir -p ~/bin && ln -sf ~/Applications/Csound/csound ~/bin/csound
 **Git clone** (workshop build on `lac-2026-csound7`):
 
 ```bash
-git clone -b lac-2026-csound7 https://github.com/csounder/DRC-Standalone ~/Dr.C-Standalone
+git clone -b lac-2026-csound7 https://github.com/csounder/DRC-Standalone.git ~/Dr.C-Standalone
 cd ~/Dr.C-Standalone && git pull && npm install && chmod +x launchers/*.sh scripts/*.sh
 cp .env.example .env   # optional
 ```

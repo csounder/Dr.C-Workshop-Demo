@@ -14,6 +14,8 @@ https://github.com/csounder/Dr.C-Workshop-Demo/blob/main/MAC-ATTENDEE-HANDOUT.md
 
 App repo: https://github.com/csounder/DRC-Standalone (branch `lac-2026-csound7`)
 
+Releases: https://github.com/csounder/DRC-Standalone/releases
+
 ---
 
 ## Linux attendees
@@ -26,6 +28,8 @@ https://github.com/csounder/Dr.C-Workshop-Demo/blob/main/LINUX-ATTENDEE-HANDOUT.
 
 App repo: https://github.com/csounder/DRC-Standalone (branch `lac-2026-csound7`)
 
+Releases: https://github.com/csounder/DRC-Standalone/releases
+
 ---
 
 ## Everyone
@@ -36,7 +40,7 @@ https://github.com/csounder/Dr.C-Workshop-Demo
 
 ```bash
 git clone https://github.com/csounder/Dr.C-Workshop-Demo.git
-git clone -b lac-2026-csound7 https://github.com/csounder/DRC-Standalone ~/Dr.C-Standalone
+git clone -b lac-2026-csound7 https://github.com/csounder/DRC-Standalone.git ~/Dr.C-Standalone
 ```
 
 **Offline demo (no key):** Agent → **Load workshop FM bell (no key)** · Player → **Demos** → FM-Bell
