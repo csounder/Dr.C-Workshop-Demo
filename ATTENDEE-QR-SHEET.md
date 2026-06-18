@@ -12,7 +12,7 @@
 
 https://github.com/csounder/Dr.C-Workshop-Demo/blob/main/MAC-ATTENDEE-HANDOUT.md
 
-Releases (DMG): https://github.com/mateolarreaferro/Dr.C-Standalone/releases
+Releases (DMG): https://github.com/mateolarreaferro/DRC-Standalone/releases
 
 ---
 
@@ -24,7 +24,7 @@ Releases (DMG): https://github.com/mateolarreaferro/Dr.C-Standalone/releases
 
 https://github.com/csounder/Dr.C-Workshop-Demo/blob/main/LINUX-ATTENDEE-HANDOUT.md
 
-Releases (AppImage): https://github.com/mateolarreaferro/Dr.C-Standalone/releases
+Releases (AppImage): https://github.com/mateolarreaferro/DRC-Standalone/releases
 
 ---
 
@@ -36,7 +36,7 @@ https://github.com/csounder/Dr.C-Workshop-Demo
 
 ```bash
 git clone https://github.com/csounder/Dr.C-Workshop-Demo.git
-git clone -b lac-2026-csound7 https://github.com/mateolarreaferro/Dr.C-Standalone.git ~/Dr.C-Standalone
+git clone -b lac-2026-csound7 https://github.com/mateolarreaferro/DRC-Standalone.git ~/Dr.C-Standalone
 ```
 
 **Offline demo (no key):** Agent → **Load workshop FM bell (no key)** · Player → **Demos** → FM-Bell
