@@ -16,6 +16,8 @@ Attendee materials for the Dr.C · Csound 7 workshop. Clone or download this rep
 
 No API key is required for offline demos (FM bell, Player, Web Apps).
 
+**Before class:** install **Csound 7**, **CsoundQt 7**, and **Cabbage** (required). **Audacity** and **Reaper** are optional but recommended — see your platform handout § Companion tools.
+
 ---
 
 ## Get Dr.C Standalone

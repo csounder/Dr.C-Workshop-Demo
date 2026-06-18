@@ -11,6 +11,7 @@ Repo: https://github.com/csounder/DRC-Standalone · Releases: https://github.com
 
 - **Csound 7.x** on `PATH` — Homebrew `csound` may be **6.x** (gate fails)
 - **Node.js 22** · macOS desktop session for Electron GUI
+- **CsoundQt 7** and **Cabbage** (required — see § Companion tools)
 
 ## 1. Csound 7 + Node 22
 
@@ -28,6 +29,17 @@ echo 'export PATH="$HOME/bin:$HOME/Applications/Csound:$PATH"' >> ~/.zshrc && so
 ```
 
 If Homebrew Csound 6 shadows CS7: `brew unlink csound`
+
+## Companion tools
+
+Install **after Csound 7**. In Dr.C: **Settings → CsoundQt** / **Settings → Cabbage** (auto-detect or **Choose…**).
+
+| Tool | Install |
+|------|---------|
+| **CsoundQt 7** (required) | [CsoundQt releases](https://github.com/CsoundQt/CsoundQt/releases) — `CsoundQt-*-MacOS.dmg` (v7 beta) → **Applications** |
+| **Cabbage** (required) | [cabbageaudio.com/download](https://cabbageaudio.com/download/) or [GitHub releases](https://github.com/cabbageaudio/Cabbage/releases) (2.10.7+) → **Applications** |
+
+**Optional:** [Audacity](https://www.audacityteam.org/) (`brew install --cask audacity`) · [Reaper](https://www.reaper.fm/download.php) (ARM64 or x64 Mac build)
 
 ## 2. Get Dr.C — git clone (recommended)
 

@@ -11,6 +11,7 @@ Repo: https://github.com/csounder/DRC-Standalone
 
 - **Csound 7.x** on `PATH` — Ubuntu 22.04 `apt install csound` = **6.17** (gate fails)
 - **Node.js 22** · Desktop session (X11/Wayland) for Electron GUI
+- **CsoundQt 7** and **Cabbage** (required — see § Companion tools; aarch64 caveats below)
 
 ## 1. Csound 7 + Node 22
 
@@ -26,6 +27,17 @@ node -v    # v22.x
 ```bash
 mkdir -p ~/bin && ln -sf ~/Applications/Csound/csound ~/bin/csound
 ```
+
+## Companion tools
+
+Install **after Csound 7**. In Dr.C: **Settings → CsoundQt** / **Settings → Cabbage**.
+
+| Tool | Install |
+|------|---------|
+| **CsoundQt 7** (required) | [CsoundQt releases](https://github.com/CsoundQt/CsoundQt/releases) — **x86_64:** v7 AppImage (`chmod +x`; symlink `~/bin/csoundqt`). **aarch64:** no official v7 binary — build `csoundqt7` branch (see `PARTICIPANTS.md`) or use macOS. `apt install csoundqt` on 22.04 is **6.x — not enough**. |
+| **Cabbage** (required) | [cabbageaudio.com/download](https://cabbageaudio.com/download/) · [rorywalsh/cabbage releases](https://github.com/rorywalsh/cabbage/releases) — **x86_64:** `CabbageLinux-*.zip` → `installCabbage.sh`. **aarch64:** zip is **x86_64 only** — no native IDE; use macOS for full GUI or build from source. Dr.C **Convert → Cabbage** still works. |
+
+**Optional:** Audacity (`sudo apt install audacity` or [Flatpak](https://flathub.org/apps/org.audacityteam.Audacity)) · Reaper tarball → `~/Applications/Reaper` ([reaper.fm/download.php](https://www.reaper.fm/download.php); aarch64 + x86_64)
 
 ## 2. Get Dr.C — git clone
 
