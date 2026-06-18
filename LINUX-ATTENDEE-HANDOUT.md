@@ -66,15 +66,20 @@ Launcher prepends `~/bin` + `~/Applications/Csound` so Csound 7 wins over system
 
 ## 5. Agent / LLM (optional)
 
+**Instructor typical:** Anthropic or OpenAI (paid). **Attendees:** Ollama, Groq, or Gemini (free).
+
 | Option | Type | Setup |
 |--------|------|-------|
 | **Ollama** (recommended local) | Local | [ollama.com/download](https://ollama.com/download) → `ollama pull qwen2.5-coder:7b` → Settings → **Local LLM server** → **Use local LLM for Agent** → **Test** |
-| **Anthropic** (Richard's typical cloud) | Cloud paid | [console.anthropic.com/settings/keys](https://console.anthropic.com/settings/keys) → Settings → **Anthropic (Claude)** → **Test** · or `ANTHROPIC_API_KEY=` in `.env` |
+| **Anthropic** | Cloud paid | [console.anthropic.com/settings/keys](https://console.anthropic.com/settings/keys) → Settings → **Anthropic (Claude)** → **Test** · or `ANTHROPIC_API_KEY=` in `.env` |
+| **OpenAI** | Cloud paid | [platform.openai.com/api-keys](https://platform.openai.com/api-keys) → Settings → **OpenAI** → **Test** · or `OPENAI_API_KEY=` in `.env` |
 | OpenRouter | Cloud | [openrouter.ai/keys](https://openrouter.ai/keys) — one key, many models; credits for best quality · free slugs at [openrouter.ai/models?max_price=0](https://openrouter.ai/models?max_price=0) |
 | Groq | Cloud free | [console.groq.com/keys](https://console.groq.com/keys) → Settings → paste key (rate limits; backup) |
-| Gemini | Cloud free | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) → Settings → paste key (backup when Groq throttles) |
+| Gemini | Cloud free or paid | [aistudio.google.com/apikey](https://aistudio.google.com/apikey) → Settings → paste key · same key for free tier or paid (enable billing in AI Studio for higher quotas) |
 
 **No key:** Agent → **Load workshop FM bell (no key)** · Player demos · Web Apps. Full guide: `~/Dr.C-Standalone/LOCAL-LLM.md`
+
+**Cursor API:** not supported in Standalone — Cursor’s API key runs [Cursor SDK agents](https://cursor.com/docs/sdk/typescript) (IDE/CI automation), not a drop-in chat key for Dr.C. Use Anthropic, OpenAI, OpenRouter, or Gemini instead.
 
 **OpenCode Zen:** [opencode.ai/docs/zen](https://opencode.ai/docs/zen/) — **Dr.C Terminal only** (`/connect`); not wired into Standalone GUI.
 
