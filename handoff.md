@@ -4,7 +4,7 @@
 **Date:** 2026-06-17  
 **Audience:** Next agent or human resuming at university (fresh Cursor chat)
 
-> **Start here:** Read this file, then `University-resume.md`, then run `FINAL-TEST-PLAN.md`.
+> **Start here:** Read `DAY-1-HANDOFF.md` (Day 1 summary), then this file, then `University-resume.md`, then run `FINAL-TEST-PLAN.md`.
 
 ---
 
@@ -109,14 +109,19 @@
 
 | Repo | Path | Branch | HEAD (session) | Remote |
 |------|------|--------|----------------|--------|
-| Dr.C Standalone | `~/Dr.C-Standalone` | `lac-2026-csound7` | `0cd5d22` | `https://github.com/mateolarreaferro/DRC-Standalone.git` |
+| Dr.C Standalone | `~/Dr.C-Standalone` | `lac-2026-csound7` | `68e0373` | `https://github.com/mateolarreaferro/DRC-Standalone.git` |
 | Dr.C Terminal | `~/Dr.C` | `main` | `f7e88ab` | `https://github.com/mateolarreaferro/Dr.C.git` |
 | Install / URLs | `~/Dr.C-URLS` | `main` | `ed46c4d` | `https://github.com/csounder/Dr.C.git` |
-| Workshop demo bundle | `~/Dr.C-Workshop-Demo` | `main` | `892b7f4` | `https://github.com/csounder/Dr.C-Workshop-Demo.git` |
+| Workshop demo bundle | `~/Dr.C-Workshop-Demo` | `main` | see `DAY-1-HANDOFF.md` | `https://github.com/csounder/Dr.C-Workshop-Demo.git` |
 
 ### Recent Standalone commits (lac-2026-csound7)
 
 ```
+68e0373 Fix Linux Terminal launch when Dr.C Multipass mount is stale.
+e5e16c9 Fix pulseaudio-module-xrdp source build on Linux VMs.
+72e48ae Add RDP-aware Mac launchers for Linux VM Dr.C apps.
+4bac43d Fix XFCE desktop launcher trust so VM icons launch over RDP.
+a3a85a3 Use explicit $HOME script paths in VM desktop launchers.
 0cd5d22 Harden Linux desktop RDP for lac-2026 workshop VMs.
 af52b56 Guard Linux VM launches against Mac node_modules from /mnt mounts.
 476ddc5 Fix XFCE desktop launchers for lac-2026-linux VM.
@@ -153,7 +158,7 @@ cd ~/Dr.C-Workshop-Demo && git pull
 
 Paste into a new chat (or use `AGENT-BRIEF.md`):
 
-1. **Read first:** `~/Dr.C-Workshop-Demo/handoff.md`, `University-resume.md`, `FINAL-TEST-PLAN.md`
+1. **Read first:** `~/Dr.C-Workshop-Demo/DAY-1-HANDOFF.md`, `handoff.md`, `University-resume.md`, `FINAL-TEST-PLAN.md`
 2. **Do not re-provision the VM** unless `multipass list` shows missing/broken VM or xrdp dead
 3. **Execute** `FINAL-TEST-PLAN.md` in order; prioritize Mac Standalone + web-app regression
 4. **On-stage:** Mac Standalone only for projector demos
