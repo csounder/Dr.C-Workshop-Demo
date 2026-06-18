@@ -18,7 +18,7 @@
 | `~/Dr.C` | Terminal / opencode monorepo — branch **`main`** |
 | `~/Dr.C-URLS` | Install guides, canonical **`LINUX-DESKTOP.md`** |
 | `~/Dr.C-WebApps` | Web apps (e.g. `_CsoundLive/web`) |
-| `~/Dr.C-Workshop-Demo` | Demo CSDs, Desktop launcher wrappers — **not a git repo** |
+| `~/Dr.C-Workshop-Demo` | Workshop bundle (handouts, `player-demos/`, launchers, agent docs) — **git** [`main`](https://github.com/csounder/Dr.C-Workshop-Demo) |
 | `~/Dr.C-WASM` | Csound 7 WASM smoke / experiments |
 
 ### Linux VM (Multipass)
@@ -74,7 +74,6 @@
 |-------|-------|
 | **Web app convert → reverts to CSD / autoplay** | Fixes through `9dfe607`; **must re-test** after `git pull` (see `FINAL-TEST-PLAN.md` §A) |
 | **RDP clipboard paste from Mac** | Does not work reliably — paste long strings via **Mac Terminal** into `multipass shell` |
-| **`~/Dr.C-Workshop-Demo` not git** | Local only; copy `LINUX-DESKTOP.md` from `~/Dr.C-URLS` if stale |
 | **Windows App vs VM session crash** | Distinguish client crash (reset script) vs XFCE WM exit 139 (re-run `vm-setup-linux-desktop.sh`) |
 | **Ubuntu apt `csound` = 6.17** | Workshop gate requires Csound **7.x** — use VM build at `~/Applications/Csound/bin/csound` |
 
@@ -113,6 +112,7 @@
 | Dr.C Standalone | `~/Dr.C-Standalone` | `lac-2026-csound7` | `0cd5d22` | `https://github.com/mateolarreaferro/DRC-Standalone.git` |
 | Dr.C Terminal | `~/Dr.C` | `main` | `f7e88ab` | `https://github.com/mateolarreaferro/Dr.C.git` |
 | Install / URLs | `~/Dr.C-URLS` | `main` | `ed46c4d` | `https://github.com/csounder/Dr.C.git` |
+| Workshop demo bundle | `~/Dr.C-Workshop-Demo` | `main` | `892b7f4` | `https://github.com/csounder/Dr.C-Workshop-Demo.git` |
 
 ### Recent Standalone commits (lac-2026-csound7)
 
@@ -131,6 +131,7 @@ af52b56 Guard Linux VM launches against Mac node_modules from /mnt mounts.
 cd ~/Dr.C-Standalone && git fetch && git checkout lac-2026-csound7 && git pull
 cd ~/Dr.C && git pull
 cd ~/Dr.C-URLS && git pull
+cd ~/Dr.C-Workshop-Demo && git pull
 ```
 
 ---
@@ -157,7 +158,7 @@ Paste into a new chat (or use `AGENT-BRIEF.md`):
 3. **Execute** `FINAL-TEST-PLAN.md` in order; prioritize Mac Standalone + web-app regression
 4. **On-stage:** Mac Standalone only for projector demos
 
-Optional: copy `FINAL-TEST-PLAN.md` to `~/Dr.C-URLS` later for attendee-facing repo (Workshop-Demo is not git).
+Participants can clone or download **https://github.com/csounder/Dr.C-Workshop-Demo** (handouts, launchers, demo CSDs, `player-demos/`). Optional: copy `FINAL-TEST-PLAN.md` to `~/Dr.C-URLS` for the install repo too.
 
 ---
 

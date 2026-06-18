@@ -4,6 +4,15 @@ Double-click launchers on the Desktop point here. Safe project directory for Dr.
 
 ---
 
+
+## Source repository
+
+Clone or download: **https://github.com/csounder/Dr.C-Workshop-Demo**
+
+Includes Mac/Linux attendee handouts, Desktop `.command` launchers, sample CSDs, `player-demos/`, and session docs (`handoff.md`, `FINAL-TEST-PLAN.md`).
+
+---
+
 ## Launchers
 
 | File | What it opens |
