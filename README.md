@@ -45,9 +45,35 @@ Linux: run `./launch-drc-attendee.sh` (or `launch-drc-standalone.sh` / `launch-d
 
 ---
 
+## Web demos
+
+Ten browser Web Apps in **`web-demos/`**. Run the gallery locally:
+
+```bash
+cd web-demos
+python3 -m http.server 8080
+```
+
+Open **http://localhost:8080**. Click **Start Audio** in each app; **internet required** for Csound WASM (CDN). See [web-demos/README.md](./web-demos/README.md) for per-demo notes.
+
+| Folder | Description |
+|--------|-------------|
+| `Dr.C-Etude1` | Generative audio-visual etude |
+| `Dr.C-Weather_Sonification` | Live weather → sound |
+| `Dr.C-DrumMachine` | Drum machine / sequencer |
+| `Dr.C-StarChart_Sonification` | Night sky → sound |
+| `Dr.C-Fractal_Explorer-L_Systems` | L-system fractal explorer |
+| `Dr.C-Mandelbrot_Explorer` | Mandelbrot set sonification |
+| `Dr.C-FM_Explorer-Fibonacci_Version` | Fibonacci FM synthesis explorer |
+| `Dr.C-FM_Simple` | Simple FM synth with presets |
+| `Dr.C-FM_Synth` | FM synth with waveform/FFT display |
+| `Dr.C_Fibonacci_Pads` | Fibonacci pad synthesizer |
+
+---
+
 ## What's in this folder
 
 - **`player-demos/`** — sample CSDs for the Player
-- **`web-demos/`** — ten browser Web Apps (gallery: run `python3 -m http.server 8080` inside `web-demos/`)
+- **`web-demos/`** — ten browser Web Apps (see **Web demos** above)
 - **`pluck_bass*.csd`** — simple compile / play examples
 - **`pluck_bass_web.html`**, **`pluck_bass_cabbage.html`** — web export examples
