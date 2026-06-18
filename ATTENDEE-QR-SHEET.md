@@ -2,41 +2,50 @@
 
 **Scan your platform** · branch `lac-2026-csound7` · no API key for offline demos
 
----
+<table>
+<tr>
+<td width="50%" valign="top">
 
-## Mac attendees
+### Mac attendees
 
-![Mac QR](https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https%3A%2F%2Fgithub.com%2Fcsounder%2FDr.C-Workshop-Demo%2Fblob%2Fmain%2FMAC-ATTENDEE-HANDOUT.md)
+![Mac QR](https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https%3A%2F%2Fgithub.com%2Fcsounder%2FDr.C-Workshop-Demo%2Fblob%2Fmain%2FMAC-ATTENDEE-HANDOUT.md)
 
-**Mac setup guide** — Csound 7, Node 22, clone `lac-2026-csound7`, launch & verify
+**Mac setup guide**
 
-https://github.com/csounder/Dr.C-Workshop-Demo/blob/main/MAC-ATTENDEE-HANDOUT.md
+- Csound **7.x** (not Homebrew 6.x)
+- Node.js **22**
+- Clone `lac-2026-csound7`, launch & verify
 
-App repo: https://github.com/csounder/DRC-Standalone (branch `lac-2026-csound7`)
+**Handout:** [MAC-ATTENDEE-HANDOUT.md](https://github.com/csounder/Dr.C-Workshop-Demo/blob/main/MAC-ATTENDEE-HANDOUT.md)
 
-Releases: https://github.com/csounder/DRC-Standalone/releases
+**App repo:** [csounder/DRC-Standalone](https://github.com/csounder/DRC-Standalone) (`lac-2026-csound7`) · [Releases](https://github.com/csounder/DRC-Standalone/releases)
 
----
+</td>
+<td width="50%" valign="top">
 
-## Linux attendees
+### Linux attendees
 
-![Linux QR](https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https%3A%2F%2Fgithub.com%2Fcsounder%2FDr.C-Workshop-Demo%2Fblob%2Fmain%2FLINUX-ATTENDEE-HANDOUT.md)
+![Linux QR](https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https%3A%2F%2Fgithub.com%2Fcsounder%2FDr.C-Workshop-Demo%2Fblob%2Fmain%2FLINUX-ATTENDEE-HANDOUT.md)
 
-**Linux setup guide** — Csound 7 (not apt 6.x), Node 22, clone `lac-2026-csound7`, launch & verify
+**Linux setup guide**
 
-https://github.com/csounder/Dr.C-Workshop-Demo/blob/main/LINUX-ATTENDEE-HANDOUT.md
+- Csound **7.x** (not apt 6.x)
+- Node.js **22**
+- Clone `lac-2026-csound7`, launch & verify
 
-App repo: https://github.com/csounder/DRC-Standalone (branch `lac-2026-csound7`)
+**Handout:** [LINUX-ATTENDEE-HANDOUT.md](https://github.com/csounder/Dr.C-Workshop-Demo/blob/main/LINUX-ATTENDEE-HANDOUT.md)
 
-Releases: https://github.com/csounder/DRC-Standalone/releases
+**App repo:** [csounder/DRC-Standalone](https://github.com/csounder/DRC-Standalone) (`lac-2026-csound7`) · [Releases](https://github.com/csounder/DRC-Standalone/releases)
+
+</td>
+</tr>
+</table>
 
 ---
 
 ## Everyone
 
-**Workshop bundle** (handouts, `player-demos/`, sample CSDs, launchers):
-
-https://github.com/csounder/Dr.C-Workshop-Demo
+**Workshop bundle** (handouts, `player-demos/`, sample CSDs, launchers): [csounder/Dr.C-Workshop-Demo](https://github.com/csounder/Dr.C-Workshop-Demo)
 
 ```bash
 git clone https://github.com/csounder/Dr.C-Workshop-Demo.git
