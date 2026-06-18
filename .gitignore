@@ -6,3 +6,13 @@
 credentials.json
 **/credentials.json
 node_modules/
+
+# Instructor-only (kept locally, not published)
+handoff.md
+DAY-1-HANDOFF.md
+FINAL-TEST-PLAN.md
+AGENT-BRIEF.md
+University-resume.md
+LINUX-DESKTOP.md
+push-all-to-csounder.command
+Csound7-WASM-Smoke-Test.command
