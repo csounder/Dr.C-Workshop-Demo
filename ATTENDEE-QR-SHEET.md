@@ -8,7 +8,9 @@
 
 ### Mac attendees
 
-![Mac QR](https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https%3A%2F%2Fgithub.com%2Fcsounder%2FDr.C-Workshop-Demo%2Fblob%2Fmain%2FMAC-ATTENDEE-HANDOUT.md)
+<p align="center">
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&amp;data=https%3A%2F%2Fgithub.com%2Fcsounder%2FDr.C-Workshop-Demo%2Fblob%2Fmain%2FMAC-ATTENDEE-HANDOUT.md" alt="Mac QR — scan for Mac handout" width="180" height="180" />
+</p>
 
 **Mac setup guide**
 
@@ -25,7 +27,9 @@
 
 ### Linux attendees
 
-![Linux QR](https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=https%3A%2F%2Fgithub.com%2Fcsounder%2FDr.C-Workshop-Demo%2Fblob%2Fmain%2FLINUX-ATTENDEE-HANDOUT.md)
+<p align="center">
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&amp;data=https%3A%2F%2Fgithub.com%2Fcsounder%2FDr.C-Workshop-Demo%2Fblob%2Fmain%2FLINUX-ATTENDEE-HANDOUT.md" alt="Linux QR — scan for Linux handout" width="180" height="180" />
+</p>
 
 **Linux setup guide**
 
