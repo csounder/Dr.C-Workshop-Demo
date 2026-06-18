@@ -4,10 +4,22 @@ VM name: **lac-2026-linux** (Ubuntu with XFCE via xrdp).
 
 ## Quick start (Mac host)
 
-1. Double-click **Dr.C Linux Desktop** on the Desktop, or run:
+1. Double-click **a-Dr.C Linux Desktop** on the Desktop, or run:
    `~/Dr.C-Standalone/scripts/open-linux-desktop.sh`
 2. Connect with **Windows App** (App Store; formerly Microsoft Remote Desktop) to the shown IP on port **3389**.
 3. Login: user **ubuntu**, password **ubuntu** (change inside the VM if needed).
+4. Launch Dr.C **inside the RDP session** from the Mac host:
+   - **Dr.C Linux Standalone Launch.command** — Electron GUI on auto-detected `DISPLAY` (usually `:10`)
+   - **Dr.C Linux Terminal Launch.command** — TUI in `xfce4-terminal` on the RDP desktop
+
+Or from Terminal on the Mac:
+
+```bash
+~/Dr.C-Standalone/scripts/launch-linux-standalone-rdp.sh
+~/Dr.C-Standalone/scripts/launch-linux-terminal-rdp.sh
+```
+
+**Order matters:** connect RDP first, then run a Launch command. The scripts detect `/tmp/.X11-unix/X*` (prefers `:10+` for xrdp).
 
 ## First-time VM setup
 
@@ -48,7 +60,54 @@ Multipass may mount the Mac copy of the repo at `/mnt/Dr.C-Standalone`. **Do not
 3. Preflight: `DRC_DRY_RUN=1 ./scripts/launch-drc.sh`
 4. Launch from the XFCE desktop (RDP session) or a VM terminal with `DISPLAY` set.
 
-From the **Mac host**, `./scripts/launch-linux-vm.sh` rsyncs from `/mnt` into `~` (excluding `node_modules`) by default. Use `./scripts/launch-linux-standalone.sh` before GUI launches for the same sync.
+From the **Mac host**, `./scripts/launch-linux-vm.sh` rsyncs from `/mnt` into `~` (excluding `node_modules`) by default. Use `./scripts/launch-linux-standalone-rdp.sh` or `./scripts/launch-linux-terminal-rdp.sh` after RDP is connected.
+
+## Audio over RDP
+
+**Workshop default:** use **Dr.C Mac Standalone** on the Mac host for live Player / sound demos. RDP audio redirection is unreliable for low-latency Csound playback.
+
+If you need audio inside the Linux VM over RDP:
+
+1. **Windows App (Mac):** edit the PC connection → enable **Play sound on this computer** (redirect remote audio to Mac).
+2. **VM:** ensure PulseAudio is available (`pulseaudio --check` or install `pulseaudio` if missing).
+3. **xrdp:** audio uses the RDP sound channel; quality and latency vary. ALSA/JACK inside the VM may not route cleanly through xrdp.
+4. **Fallback:** render to WAV in Dr.C and play in **Audacity** on Mac or inside the VM.
+
+See also `~/Dr.C-URLS/INSTALL-STANDALONE.md` § Linux audio notes (ALSA/JACK for native Linux sessions).
+
+## Ollama on the VM (local LLM)
+
+Inside `multipass shell lac-2026-linux` (Ubuntu 22.04 aarch64):
+
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+ollama serve &    # or: systemctl --user enable --now ollama
+ollama pull qwen2.5-coder:7b
+```
+
+Dr.C finds Ollama at **`http://127.0.0.1:11434`** (Settings → Local LLM server → **Use local LLM for Agent** → **Test**). Full guide: `~/Dr.C-Standalone/LOCAL-LLM.md`.
+
+## API keys on the VM
+
+Copy and edit (never commit):
+
+```bash
+cd ~/Dr.C-Standalone
+cp .env.example .env
+chmod 600 .env
+```
+
+Supported variables (from `.env.example`):
+
+| Variable | Purpose |
+|----------|---------|
+| `OPENROUTER_API_KEY` | One key for Claude, GPT, Gemini, … |
+| `ANTHROPIC_API_KEY` | Direct Claude |
+| `OPENAI_API_KEY` | Direct OpenAI |
+| `GROQ_API_KEY` | Free-tier backup |
+| `GEMINI_API_KEY` | Free-tier backup |
+
+Dev mode loads `~/Dr.C-Standalone/.env`; you can also use `~/.env`. Packaged builds use **Settings → API Keys** in the app.
 
 ## Troubleshooting
 
